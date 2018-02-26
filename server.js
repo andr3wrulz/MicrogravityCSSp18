@@ -3,7 +3,7 @@ var express = require('express');
 var app = express();
 var bodyParser = require('body-parser');
 var morgan = require('morgan');
-var mongoose = require('mongoose');
+//var mongoose = require('mongoose');
 var router = express.Router();
 var appRoutes = require('./app/routes/api')(router);
 var path = require('path');
@@ -19,14 +19,14 @@ app.use(express.static(__dirname + '/public'));
 app.use('/api', appRoutes);
 
 // Database Connection
-mongoose.connect('mongodb://localhost/groundcontrol', function (err){
+/*mongoose.connect('mongodb://localhost/groundcontrol', function (err){
 	if(err) {
 		console.log('[ERROR] Not connected to database' + err);
 		throw err;
 	} else {
 		console.log('[SERVER] Connected to database!');
 	}
-});
+});*/
 
 // Serve index.html for all possible routes
 app.get('*', function(req, res) {
