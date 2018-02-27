@@ -5,7 +5,7 @@ var bodyParser = require('body-parser');
 var morgan = require('morgan');
 var mysql = require('mysql');
 var router = express.Router();
-var appRoutes = require('./app/routes/api')(router);
+//var api = require('./app/controllers/api')(router);
 var path = require('path');
 
 // Variables
@@ -15,11 +15,10 @@ var port = process.env.PORT || 8080;
 app.use(morgan('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
-app.use(express.static(__dirname + '/public'));
-app.use('/api', appRoutes);
+app.use(express.static(__dirname + '/public'));// Serve static files in public folder
 
 // Database Connection
-var dbConnection = mysql.createConnection( {
+dbConnection = mysql.createConnection( {
       host     : 'localhost',
       user     : 'webuser',
       password : 'Super!Secure',
@@ -27,7 +26,18 @@ var dbConnection = mysql.createConnection( {
  }); 
  dbConnection.connect();
  
-
+ // Api setup
+ app.use('/api', router);// Serve the api off of ip:port/api/...
+ 
+ var runAPI = require('./app/controllers/run/index');
+ router.get('/run', runAPI.getAll);
+ router.get('/run/:id', runAPI.getOne);
+ router.post('/run', runAPI.create);
+ router.post('/run/title/:title', runAPI.createWithTitle);
+ router.post('/run/title/:title/desc/:desc', runAPI.createWithDetails);
+ router.post('/run/:id/title/:title/desc/:desc', runAPI.modify);
+ router.delete('/run/:id', runAPI.remove);
+ 
 // Serve index.html for all possible routes
 app.get('*', function(req, res) {
 	res.sendFile(path.join(__dirname + '/public/app/views/index.html'));

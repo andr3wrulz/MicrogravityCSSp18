@@ -1,5 +1,5 @@
 // Run API
-GET		/run					Get latest run
+GET		/run					Get all runs
 GET		/run/x					Get run where run_id == x
 POST	/run					Create a new run
 POST	/run/title/x			Create a new run with title x/
