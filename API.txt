@@ -8,17 +8,24 @@ PUT		/run/x/title/y/desc/z	Modify run info where run_id == x and set title = y a
 DELETE	/run/x					Delete run where run_id == x, should delete run data too
 
 // Errors API
+GET		/error						Get all errors
 GET		/error/x					Get error where error_id == x
 POST	/error/type/x/desc/y		Create a new error with type x and description y
 PUT		/error/x/type/y/desc/z		Modify error info where error_id == x and set type = y and description = z
 DELETE	/error/x					Delete error where error_id == x
 
 // Run Errors API
-GET		/runerror/x				Get run error where error_number == x
-GET		/runerror/run/x			Get errors where run_id == x/error/y
-GET		/runerror/error/x		Get errors where error_id = x
-POST	/runerror/run/x/error/y	Create a new runtime error entry on run x with error_id y
-DELETE	/runerror/x				Delete run error where error_number == x
+GET		/runerror/x								Get run error where error_number == x
+GET		/runerror/run/x							Get errors where run_id == x/error/y
+GET		/runerror/error/x						Get errors where error_id = x
+GET		/runerror/after/x						Get errors with timestamp >= x
+GET		/runerror/before/x						Get errors with timestamp <= x
+GET		/runerror/after/x/before/y				Get errors with timestamp between x and y
+POST	/runerror/run/x/error/y					Create a new runtime error on run x with error_id y
+POST	/runerror/run/x/error/y/sensor/z		Create a new runtime error on run x with error_id y and sensor_id z
+POST	/runerror/run/x/error/y/time/z			Create a new runtime error on run x with error_id y and timestamp z
+POST	/runerror/run/x/error/y/sensor/z/time/a	Create a new runtime error on run x with error_id y, sensor_id z and timestamp a
+DELETE	/runerror/x								Delete run error where error_number == x
 
 // Sensor Type API
 GET		/sensortype/x			Get sensor type where sensor_type_id == x
@@ -34,10 +41,13 @@ PUT		/sensor/x/type/y/units/z/desc/a	Modify sensor info where sensor_id == x and
 DELETE	/sensor/x						Delete sensor where sensor_id == x
 
 // Reading API
-GET		/reading/x							Get reading where read_id == x
-GET		/reading/run/x/sensor/y				Get readings where run_id == x and sensor_id == y
-POST	/reading/run/x/sensor/y/reading/z	Create a reading for run x and sensor y with reading of z
-PUT		/reading/x/value/y					Modify reading where read_id == x and set its reading to y
-DELETE	/reading/x							Delete reading where read_id == x
-DELETE	/reading/run/x						Delete all readings where run_id == x
-DELETE	/reading/sensor/x					Delete all readings where sensor_id == x
+GET		/reading/x									Get reading where read_id == x
+GET		/reading/run/x								Get all readings where run_id == x
+GET		/reading/run/x/sensor/y						Get readings where run_id == x and sensor_id == y
+GET		/reading/after/x/before/y					Get all readings where timestamp between x and y
+POST	/reading/run/x/sensor/y/reading/z			Create a reading for run x and sensor y with reading of z
+POST	/reading/run/x/sensor/y/reading/z/time/a	Create a reading for run x and sensor y with reading of z and timestamp of a
+PUT		/reading/x/value/y							Modify reading where read_id == x and set its reading to y
+DELETE	/reading/x									Delete reading where read_id == x
+DELETE	/reading/run/x								Delete all readings where run_id == x
+DELETE	/reading/sensor/x							Delete all readings where sensor_id == x
