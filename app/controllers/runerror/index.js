@@ -92,7 +92,7 @@ module.exports = {
 			return res.send({error: error, data: results, message: "Requested runtime error(s)"});
 		});
 	},
-	createWithoutTime: function(req, res) {
+	create: function(req, res) {
 		let run_id = req.params.run;
 		let error_id = req.params.error;
 		
@@ -100,10 +100,69 @@ module.exports = {
 			return res.status(400).send({error: true, message: 'Please provide a run_id and error_id!'});
 		}
 		
-		dbConnection.query("INSERT INTO run_errors (run_id, error_id", [run_id, error_id],
+		dbConnection.query("INSERT INTO run_errors (run_id, error_id) VALUES (?, ?)", [run_id, error_id],
 		function(error, results, fields) {
 			if (error) throw error;
-			return res.send({error: error, data: results, message: "Requested runtime error(s)"});
+			return res.send({error: error, data: results, message: "Created runtime error"});
 		});
 	},
+	createWithSensor: function(req, res) {
+		let run_id = req.params.run;
+		let error_id = req.params.error;
+		let sensor_id = req.params.sensor;
+		
+		if (!run_id || !error_id || !sensor_id) {
+			return res.status(400).send({error: true, message: 'Please provide a run_id, error_id and sensor_id!'});
+		}
+		
+		dbConnection.query("INSERT INTO run_errors (run_id, error_id, sensor_id) VALUES (?, ?, ?)", [run_id, error_id, sensor_id],
+		function(error, results, fields) {
+			if (error) throw error;
+			return res.send({error: error, data: results, message: "Created runtime error"});
+		});
+	},
+	createWithTime: function(req, res) {
+		let run_id = req.params.run;
+		let error_id = req.params.error;
+		let timestamp = req.params.time;
+		
+		if (!run_id || !error_id || !timestamp) {
+			return res.status(400).send({error: true, message: 'Please provide a run_id, error_id and timestamp!'});
+		}
+		
+		dbConnection.query("INSERT INTO run_errors (run_id, error_id, timestamp) VALUES (?, ?, ?)", [run_id, error_id, timestamp],
+		function(error, results, fields) {
+			if (error) throw error;
+			return res.send({error: error, data: results, message: "Created runtime error"});
+		});
+	},
+	createWithAll: function(req, res) {
+		let run_id = req.params.run;
+		let error_id = req.params.error;
+		let sensor_id = req.params.sensor;
+		let timestamp = req.params.time;
+		
+		if (!run_id || !error_id || !sensor_id || !timestamp) {
+			return res.status(400).send({error: true, message: 'Please provide a run_id, error_id, sensor_id and timestamp!'});
+		}
+		
+		dbConnection.query("INSERT INTO run_errors (run_id, error_id, sensor_id, timestamp) VALUES (?, ?, ?, ?)", [run_id, error_id, sensor_id, timestamp],
+		function(error, results, fields) {
+			if (error) throw error;
+			return res.send({error: error, data: results, message: "Created runtime error"});
+		});
+	},
+	remove: function(req, res) {
+		let error_number = req.params.id;
+		
+		if (!error_number) {
+			return res.status(400).send({error: true, message: 'Please provide a error_number!'});
+		}
+		
+		dbConnection.query("DELETE FROM run_errors WHERE error_number = ?", error_number,
+		function(error, results, fields) {
+			if (error) throw error;
+			return res.send({error: error, data: results, message: "Deleted runtime error"});
+		});
+	}
 };

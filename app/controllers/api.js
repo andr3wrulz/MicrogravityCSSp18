@@ -33,4 +33,30 @@ module.exports = function(router) {
 	router.post('/run/title/:title/desc/:desc', runAPI.createWithDetails);
 	router.put('/run/:id/title/:title/desc/:desc', runAPI.modify);
 	router.delete('/run/:id', runAPI.remove);
+	
+	var runErrorAPI = require('./runerror/index');
+	router.get('/runerror/:id', runErrorAPI.getOne);
+	router.get('/runerror/run/:run', runErrorAPI.getByRun);
+	router.get('/runerror/error/:error_id', runErrorAPI.getByError);
+	router.get('/runerror/after/:after_time', runErrorAPI.getAfter);
+	router.get('/runerror/before/:before_time', runErrorAPI.getBefore);
+	router.get('/runerror/after/:after_time/before/:before_time', runErrorAPI.getByTime);
+	router.post('/runerror/run/:run/error/:error', runErrorAPI.create);
+	router.post('/runerror/run/:run/error/:error/sensor/:sensor', runErrorAPI.createWithSensor);
+	router.post('/runerror/run/:run/error/:error/time/:time', runErrorAPI.createWithTime);
+	router.post('/runerror/run/:run/error/:error/sensor/:sensor/time/:time', runErrorAPI.createWithAll);
+	router.delete('/runerror/:id', runErrorAPI.remove);
+	
+	var sensorAPI = require('./sensor/index');
+	router.get('/sensor/:id', sensorAPI.getOne);
+	router.post('/sensor/type/:type/units/:units', sensorAPI.create);
+	router.post('/sensor/type/:type/units/:units/desc/:desc', sensorAPI.createWithDescription);
+	router.put('/sensor/:id/type/:type/units/:units/desc/:desc', sensorAPI.modify);
+	router.delete('/sensor/:id', sensorAPI.remove);
+	
+	var sensorTypeAPI = require('./sensortype/index');
+	router.get('/sensortype/:id', sensorTypeAPI.getOne);
+	router.post('/sensortype/desc/:desc', sensorTypeAPI.create);
+	router.put('/sensortype/:id/desc/:desc', sensorTypeAPI.modify);
+	router.delete('/sensortype/:id', sensorTypeAPI.remove);
 };
