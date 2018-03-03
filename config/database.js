@@ -1,6 +1,6 @@
 module.exports = {
 	connectionString: {
-      host     : 'localhost',
+      host     : '192.168.1.15',
       user     : 'webuser',
       password : 'Super!Secure',
       database : 'ground_control',
