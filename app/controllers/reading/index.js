@@ -1,14 +1,14 @@
 /*
-GET		/reading/x									Get reading where read_id == x
-GET		/reading/run/x								Get all readings where run_id == x
-GET		/reading/run/x/sensor/y						Get readings where run_id == x and sensor_id == y
-GET		/reading/after/x/before/y					Get all readings where timestamp between x and y
-POST	/reading/run/x/sensor/y/reading/z			Create a reading for run x and sensor y with reading of z
-POST	/reading/run/x/sensor/y/reading/z/time/a	Create a reading for run x and sensor y with reading of z and timestamp of a
-PUT		/reading/x/value/y							Modify reading where read_id == x and set its reading to y
-DELETE	/reading/x									Delete reading where read_id == x
-DELETE	/reading/run/x								Delete all readings where run_id == x
-DELETE	/reading/sensor/x							Delete all readings where sensor_id == x
+GET		/reading/x									get_reading(x)					Get reading where read_id == x
+GET		/reading/run/x								get_reading_run(x)				Get all readings where run_id == x
+GET		/reading/run/x/sensor/y						get_reading_sensor(x)			Get readings where run_id == x and sensor_id == y
+GET		/reading/after/x/before/y					get_reading_between(x, y)		Get all readings where timestamp between x and y
+POST	/reading/run/x/sensor/y/reading/z			create_reading(x, y, z)			Create a reading for run x and sensor y with reading of z
+POST	/reading/run/x/sensor/y/reading/z/time/a	create_reading_time(x, y, z, a)	Create a reading for run x and sensor y with reading of z and timestamp of a
+PUT		/reading/x/value/y							modify_reading(x, y)			Modify reading where read_id == x and set its reading to y
+DELETE	/reading/x									remove_reading(x)				Delete reading where read_id == x
+DELETE	/reading/run/x								remove_reading_run(x)			Delete all readings where run_id == x
+DELETE	/reading/sensor/x							remove_reading_sensor(x)		Delete all readings where sensor_id == x
 */
 
 module.exports = {
@@ -19,7 +19,7 @@ module.exports = {
 			return res.status(400).send({error: true, message: 'Please provide a read_id!'});
 		}
 		
-		dbConnection.query("SELECT * FROM readings WHERE read_id = ?", read_id,
+		dbConnection.query("CALL get_reading(?)", read_id,
 		function(error, results, fields) {
 			if (error) throw error;
 			return res.send({error: error, data: results, message: "Requested reading"});
@@ -32,7 +32,7 @@ module.exports = {
 			return res.status(400).send({error: true, message: 'Please provide a run_id!'});
 		}
 		
-		dbConnection.query("SELECT * FROM readings WHERE run_id = ?", run_id,
+		dbConnection.query("CALL get_reading_run(?)", run_id,
 		function(error, results, fields) {
 			if (error) throw error;
 			return res.send({error: error, data: results, message: "Requested reading(s)"});
@@ -46,7 +46,7 @@ module.exports = {
 			return res.status(400).send({error: true, message: 'Please provide a run_id and sensor_id!'});
 		}
 		
-		dbConnection.query("SELECT * FROM readings WHERE run_id = ? and sensor_id = ?", [run_id, sensor_id],
+		dbConnection.query("CALL get_reading_run_sensor(?, ?)", [run_id, sensor_id],
 		function(error, results, fields) {
 			if (error) throw error;
 			return res.send({error: error, data: results, message: "Requested reading(s)"});
@@ -60,7 +60,7 @@ module.exports = {
 			return res.status(400).send({error: true, message: 'Please provide a before_time and after_time!'});
 		}
 		
-		dbConnection.query("SELECT * FROM readings WHERE timestamp BETWEEN ? AND ?", [after_time, before_time],
+		dbConnection.query("CALL get_reading_between(?, ?)", [after_time, before_time],
 		function(error, results, fields) {
 			if (error) throw error;
 			return res.send({error: error, data: results, message: "Requested reading(s)"});
@@ -75,7 +75,7 @@ module.exports = {
 			return res.status(400).send({error: true, message: 'Please provide a reading, a run_id, and a sensor_id!'});
 		}
 		
-		dbConnection.query("INSERT INTO readings (run_id, sensor_id, reading) VALUES (?, ?, ?)", [run_id, sensor_id, reading],
+		dbConnection.query("CALL create_reading(?, ?, ?)", [run_id, sensor_id, reading],
 		function(error, results, fields) {
 			if (error) throw error;
 			return res.send({error: error, data: results, message: "Inserted reading, refer to insertID field of data"});
@@ -91,7 +91,7 @@ module.exports = {
 			return res.status(400).send({error: true, message: 'Please provide a reading, timestamp, run_id, and sensor_id!'});
 		}
 		
-		dbConnection.query("INSERT INTO readings (run_id, sensor_id, reading, timestamp) VALUES (?, ?, ?, ?)", [run_id, sensor_id, reading, time],
+		dbConnection.query("CALL create_reading_time(?, ?, ?, ?)", [run_id, sensor_id, reading, time],
 		function(error, results, fields) {
 			if (error) throw error;
 			return res.send({error: error, data: results, message: "Inserted reading, refer to insertID field of data"});
@@ -105,7 +105,7 @@ module.exports = {
 			return res.status(400).send({error: true, message: 'Please provide a read_id and a new_value!'});
 		}
 		
-		dbConnection.query("UPDATE readings SET reading = ? WHERE read_id = ?", [new_value, read_id],
+		dbConnection.query("CALL modify_reading(?, ?)", [read_id, new_value],
 		function(error, results, fields) {
 			if (error) throw error;
 			return res.send({error: error, data: results, message: "Updated requested reading"});
@@ -118,7 +118,8 @@ module.exports = {
 			return res.status(400).send({error: true, message: 'Please provide a read_id!'});
 		}
 		
-		dbConnection.query("DELETE FROM readings WHERE read_id = ?", read_id, function(error, results, fields) {
+		dbConnection.query("CALL remove_reading(?)", read_id,
+		function(error, results, fields) {
 			if (error) throw error;
 			return res.send({error: error, data: results, message: "Deleted requested reading"});
 		});
@@ -130,7 +131,8 @@ module.exports = {
 			return res.status(400).send({error: true, message: 'Please provide a run_id!'});
 		}
 		
-		dbConnection.query("DELETE FROM readings WHERE run_id = ?", run_id, function(error, results, fields) {
+		dbConnection.query("CALL remove_reading_run(?)", run_id,
+		function(error, results, fields) {
 			if (error) throw error;
 			return res.send({error: error, data: results, message: "Deleted requested reading(s)"});
 		});
@@ -142,7 +144,8 @@ module.exports = {
 			return res.status(400).send({error: true, message: 'Please provide a sensor_id!'});
 		}
 		
-		dbConnection.query("DELETE FROM readings WHERE sensor_id = ?", sensor_id, function(error, results, fields) {
+		dbConnection.query("CALL remove_reading_sensor(?)", sensor_id,
+		function(error, results, fields) {
 			if (error) throw error;
 			return res.send({error: error, data: results, message: "Deleted requested reading(s)"});
 		});

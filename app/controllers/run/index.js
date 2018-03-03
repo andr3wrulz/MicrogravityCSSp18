@@ -1,16 +1,16 @@
 /*
-GET		/run					Get all runs
-GET		/run/x					Get run where run_id == x
-POST	/run					Create a new run
-POST	/run/title/x			Create a new run with title x/
-POST	/run/title/x/desc/y		Create a new run with title x and description y
-PUT		/run/x/title/y/desc/z	Modify run info where run_id == x and set title = y and description = z
-DELETE	/run/x					Delete run where run_id == x, should delete run data too
+GET		/run					get_all_runs				Get all runs
+GET		/run/x					get_run(x)					Get run where run_id == x
+POST	/run					create_run()				Create a new run
+POST	/run/title/x			create_run_title(x)			Create a new run with title x
+POST	/run/title/x/desc/y		create_run_title_desc(x, y)	Create a new run with title x and description y
+PUT		/run/x/title/y/desc/z	modify_run(x, y, z)			Modify run info where run_id == x and set title = y and description = z
+DELETE	/run/x					remove_run(x)				Delete run where run_id == x, should delete run data too
 */
 
 module.exports = {
 	getAll: function(req, res) {
-		dbConnection.query("SELECT * FROM runs",
+		dbConnection.query("CALL get_all_runs()",
 		 function(error, results, fields) {
 			if (error) throw error;
 			return res.send({error: error, data: results, message: "All runs"});
@@ -23,14 +23,14 @@ module.exports = {
 			return res.status(400).send({error: true, message: 'Please provide a run_id!'});
 		}
 		
-		dbConnection.query("SELECT * FROM runs WHERE run_id = ?", run_id,
+		dbConnection.query("CALL get_run(x)", run_id,
 		function(error, results, fields) {
 			if (error) throw error;
 			return res.send({error: error, data: results, message: "Requested run"});
 		});
 	},
 	create: function(req, res) {		
-		dbConnection.query("INSERT INTO runs VALUES ()",
+		dbConnection.query("CALL create_run()",
 		function(error, results, fields) {
 			if (error) throw error;
 			return res.send({error: error, data: results, message: 'Created run, refer to insertID field of data'});
@@ -43,7 +43,7 @@ module.exports = {
 			return res.status(400).send({error: true, message: 'Please provide a title!'});
 		}
 		
-		dbConnection.query("INSERT INTO runs (title) VALUES (?)", title,
+		dbConnection.query("CALL create_run_title", title,
 		function(error, results, fields) {
 			if (error) throw error;
 			return res.send({error: error, data: results, message: 'Created run, refer to insertID field of data'});
@@ -57,7 +57,7 @@ module.exports = {
 			return res.status(400).send({error: true, message: 'Please provide a title and description!'});
 		}
 		
-		dbConnection.query("INSERT INTO runs (title, description) VALUES (?, ?)", [title, desc],
+		dbConnection.query("CALL create_run_title_desc", [title, desc],
 		function(error, results, fields) {
 			if (error) throw error;
 			return res.send({error: error, data: results, message: 'Created run, refer to insertID field of data'});
@@ -72,7 +72,7 @@ module.exports = {
 			return res.status(400).send({error: true, message: 'Please provide a run_id, title and description!'});
 		}
 		
-		dbConnection.query("UPDATE runs SET title = ?, description = ? WHERE run_id = ?", [title, desc, run_id],
+		dbConnection.query("CALL modify_run(?, ?, ?)", [run_id, title, desc],
 		function(error, results, fields) {
 			if (error) throw error;
 			return res.send({error: error, data: results, message: 'Modified run'});
@@ -85,7 +85,7 @@ module.exports = {
 			return res.status(400).send({error: true, message: 'Please provide a run_id!'});
 		}
 		
-		dbConnection.query("DELETE FROM runs WHERE run_id = ?", run_id,
+		dbConnection.query("CALL remove_run(?)", run_id,
 		function(error, results, fields) {
 			if (error) throw error;
 			return res.send({error: error, data: results, message: "Deleted requested run"});

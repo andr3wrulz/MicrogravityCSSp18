@@ -44,6 +44,7 @@ module.exports = function(router) {
 	router.delete('/runerror/:id', runErrorAPI.remove);
 	
 	var sensorAPI = require('./sensor/index');
+	router.get('/sensor', sensorAPI.getAll);
 	router.get('/sensor/:id', sensorAPI.getOne);
 	router.post('/sensor/type/:type/units/:units', sensorAPI.create);
 	router.post('/sensor/type/:type/units/:units/desc/:desc', sensorAPI.createWithDescription);
@@ -51,6 +52,7 @@ module.exports = function(router) {
 	router.delete('/sensor/:id', sensorAPI.remove);
 	
 	var sensorTypeAPI = require('./sensortype/index');
+	router.get('/sensortype', sensorTypeAPI.getAll);
 	router.get('/sensortype/:id', sensorTypeAPI.getOne);
 	router.post('/sensortype/desc/:desc', sensorTypeAPI.create);
 	router.put('/sensortype/:id/desc/:desc', sensorTypeAPI.modify);

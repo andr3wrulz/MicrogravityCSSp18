@@ -1,15 +1,15 @@
 /*
-GET		/runerror/x								Get run error where error_number == x
-GET		/runerror/run/x							Get errors where run_id == x/error/y
-GET		/runerror/error/x						Get errors where error_id = x
-GET		/runerror/after/x						Get errors with timestamp >= x
-GET		/runerror/before/x						Get errors with timestamp <= x
-GET		/runerror/after/x/before/y				Get errors with timestamp between x and y
-POST	/runerror/run/x/error/y					Create a new runtime error on run x with error_id y
-POST	/runerror/run/x/error/y/sensor/z		Create a new runtime error on run x with error_id y and sensor_id z
-POST	/runerror/run/x/error/y/time/z			Create a new runtime error on run x with error_id y and timestamp z
-POST	/runerror/run/x/error/y/sensor/z/time/a	Create a new runtime error on run x with error_id y, sensor_id z and timestamp a
-DELETE	/runerror/x								Delete run error where error_number == x
+GET		/runerror/x								get_runerror(x)							Get run error where error_number == x
+GET		/runerror/run/x							get_runerror_run(x)						Get errors where run_id == x/error/y
+GET		/runerror/error/x						get_runerror_error(x)					Get errors where error_id = x
+GET		/runerror/after/x						get_runerror_after(x)					Get errors with timestamp >= x
+GET		/runerror/before/x						get_runerror_before(x)					Get errors with timestamp <= x
+GET		/runerror/after/x/before/y				get_runerror_between(x, y)				Get errors with timestamp between x and y
+POST	/runerror/run/x/error/y					create_runerror(x, y)					Create a new runtime error on run x with error_id y
+POST	/runerror/run/x/error/y/sensor/z		create_runerror_sensor(x, y, z)			Create a new runtime error on run x with error_id y and sensor_id z
+POST	/runerror/run/x/error/y/time/z			create_runerror_time(x, y, z)			Create a new runtime error on run x with error_id y and timestamp z
+POST	/runerror/run/x/error/y/sensor/z/time/a	create_runerror_sensor_time(x, y, z, a)	Create a new runtime error on run x with error_id y, sensor_id z and timestamp a
+DELETE	/runerror/x								remove_runerror(x)						Delete run error where error_number == x
 */
 
 module.exports = {
@@ -20,7 +20,7 @@ module.exports = {
 			return res.status(400).send({error: true, message: 'Please provide a error_number!'});
 		}
 		
-		dbConnection.query("SELECT * FROM run_errors WHERE error_number = ?", error_number,
+		dbConnection.query("CALL get_runerror(?)", error_number,
 		function(error, results, fields) {
 			if (error) throw error;
 			return res.send({error: error, data: results, message: "Requested runtime error"});
@@ -33,7 +33,7 @@ module.exports = {
 			return res.status(400).send({error: true, message: 'Please provide a run_id!'});
 		}
 		
-		dbConnection.query("SELECT * FROM run_errors WHERE run_id = ?", run_id,
+		dbConnection.query("CALL get_runerror_run(?)", run_id,
 		function(error, results, fields) {
 			if (error) throw error;
 			return res.send({error: error, data: results, message: "Requested runtime error(s)"});
@@ -46,7 +46,7 @@ module.exports = {
 			return res.status(400).send({error: true, message: 'Please provide a error_id!'});
 		}
 		
-		dbConnection.query("SELECT * FROM run_errors WHERE error_id = ?", error_id,
+		dbConnection.query("CALL get_runerror_error(?)", error_id,
 		function(error, results, fields) {
 			if (error) throw error;
 			return res.send({error: error, data: results, message: "Requested runtime error(s)"});
@@ -59,7 +59,7 @@ module.exports = {
 			return res.status(400).send({error: true, message: 'Please provide a after_time!'});
 		}
 		
-		dbConnection.query("SELECT * FROM run_errors WHERE timestamp >= ?", after_time,
+		dbConnection.query("CALL get_runerror_after(?)", after_time,
 		function(error, results, fields) {
 			if (error) throw error;
 			return res.send({error: error, data: results, message: "Requested runtime error(s)"});
@@ -72,7 +72,7 @@ module.exports = {
 			return res.status(400).send({error: true, message: 'Please provide a before_time!'});
 		}
 		
-		dbConnection.query("SELECT * FROM run_errors WHERE timestamp <= ?", before_time,
+		dbConnection.query("CALL get_runerror_before(?)", before_time,
 		function(error, results, fields) {
 			if (error) throw error;
 			return res.send({error: error, data: results, message: "Requested runtime error(s)"});
@@ -86,7 +86,7 @@ module.exports = {
 			return res.status(400).send({error: true, message: 'Please provide a before_time and after_time!'});
 		}
 		
-		dbConnection.query("SELECT * FROM run_errors WHERE timestamp BETWEEN ? AND ?", [after_time, before_time],
+		dbConnection.query("CALL get_runerror_between(?, ?)", [after_time, before_time],
 		function(error, results, fields) {
 			if (error) throw error;
 			return res.send({error: error, data: results, message: "Requested runtime error(s)"});
@@ -100,7 +100,7 @@ module.exports = {
 			return res.status(400).send({error: true, message: 'Please provide a run_id and error_id!'});
 		}
 		
-		dbConnection.query("INSERT INTO run_errors (run_id, error_id) VALUES (?, ?)", [run_id, error_id],
+		dbConnection.query("CALL create_runerror(?, ?)", [run_id, error_id],
 		function(error, results, fields) {
 			if (error) throw error;
 			return res.send({error: error, data: results, message: "Created runtime error"});
@@ -115,7 +115,7 @@ module.exports = {
 			return res.status(400).send({error: true, message: 'Please provide a run_id, error_id and sensor_id!'});
 		}
 		
-		dbConnection.query("INSERT INTO run_errors (run_id, error_id, sensor_id) VALUES (?, ?, ?)", [run_id, error_id, sensor_id],
+		dbConnection.query("CALL create_runerror_sensor(?, ?, ?)", [run_id, error_id, sensor_id],
 		function(error, results, fields) {
 			if (error) throw error;
 			return res.send({error: error, data: results, message: "Created runtime error"});
@@ -130,7 +130,7 @@ module.exports = {
 			return res.status(400).send({error: true, message: 'Please provide a run_id, error_id and timestamp!'});
 		}
 		
-		dbConnection.query("INSERT INTO run_errors (run_id, error_id, timestamp) VALUES (?, ?, ?)", [run_id, error_id, timestamp],
+		dbConnection.query("CALL create_runerror_time(?, ?, ?)", [run_id, error_id, timestamp],
 		function(error, results, fields) {
 			if (error) throw error;
 			return res.send({error: error, data: results, message: "Created runtime error"});
@@ -146,7 +146,7 @@ module.exports = {
 			return res.status(400).send({error: true, message: 'Please provide a run_id, error_id, sensor_id and timestamp!'});
 		}
 		
-		dbConnection.query("INSERT INTO run_errors (run_id, error_id, sensor_id, timestamp) VALUES (?, ?, ?, ?)", [run_id, error_id, sensor_id, timestamp],
+		dbConnection.query("CALL create_runerror_sensor_time(?, ?, ?, ?)", [run_id, error_id, sensor_id, timestamp],
 		function(error, results, fields) {
 			if (error) throw error;
 			return res.send({error: error, data: results, message: "Created runtime error"});
@@ -159,7 +159,7 @@ module.exports = {
 			return res.status(400).send({error: true, message: 'Please provide a error_number!'});
 		}
 		
-		dbConnection.query("DELETE FROM run_errors WHERE error_number = ?", error_number,
+		dbConnection.query("CALL remove_runerror(?)", error_number,
 		function(error, results, fields) {
 			if (error) throw error;
 			return res.send({error: error, data: results, message: "Deleted runtime error"});
