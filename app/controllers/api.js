@@ -1,9 +1,5 @@
-//var errorAPI = require('./error/index');
-//var readingAPI = require('./reading/index');
-//var runAPI = require('./run/index')(router);
-//var runerrorAPI = require('./runerror/index');
-//var sensorAPI = require('./sensor/index');
-//var sensortypeAPI = require('./sensortype/index');
+// Each table has its own file to keep structure organized
+// All routes are defined in this file and link to the call in the table's file
 
 module.exports = function(router) {
 	var errorAPI = require('./error/index');
