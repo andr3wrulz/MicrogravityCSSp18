@@ -26,9 +26,9 @@ app.use('/api', router);// Serve the api off of ip:port/api/...
 require('./app/controllers/api')(router);// Import our API
 
 // Serve index.html for all routes not specified
-app.get('*', function(req, res) {
+/*app.get('*', function(req, res) {
 	res.sendFile(path.join(__dirname + '/public/app/views/index.html'));
-});
+});*/
 
 // Start server
 app.listen(port, function() {
