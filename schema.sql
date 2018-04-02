@@ -16,6 +16,22 @@
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
 --
+-- Table structure for table `commands`
+--
+
+DROP TABLE IF EXISTS `commands`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `commands` (
+  `command_id` int(11) NOT NULL AUTO_INCREMENT,
+  `time_created` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `time_sent` datetime DEFAULT NULL,
+  `command_type` varchar(45) NOT NULL,
+  PRIMARY KEY (`command_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=13 DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
 -- Table structure for table `errors`
 --
 
@@ -27,7 +43,7 @@ CREATE TABLE `errors` (
   `type` varchar(45) NOT NULL,
   `description` varchar(255) NOT NULL,
   PRIMARY KEY (`error_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -41,10 +57,14 @@ CREATE TABLE `readings` (
   `read_id` int(11) NOT NULL AUTO_INCREMENT,
   `run_id` int(11) NOT NULL,
   `sensor_id` int(11) NOT NULL,
-  `reading` decimal(8,0) NOT NULL,
+  `reading` decimal(16,6) NOT NULL,
   `timestamp` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  PRIMARY KEY (`read_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=latin1;
+  PRIMARY KEY (`read_id`),
+  KEY `fk_run_id_idx` (`run_id`),
+  KEY `fk_sensor_id_idx` (`sensor_id`),
+  CONSTRAINT `fk_runs_readings` FOREIGN KEY (`run_id`) REFERENCES `runs` (`run_id`),
+  CONSTRAINT `fk_sensors_readings` FOREIGN KEY (`sensor_id`) REFERENCES `sensors` (`sensor_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=2369 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -60,8 +80,14 @@ CREATE TABLE `run_errors` (
   `run_id` int(11) NOT NULL,
   `timestamp` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `sensor_id` int(11) DEFAULT NULL,
-  PRIMARY KEY (`error_number`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+  PRIMARY KEY (`error_number`),
+  KEY `fk_run_id_idx` (`run_id`),
+  KEY `fk_error_id_idx` (`error_id`),
+  KEY `fk_sensor_id_idx` (`sensor_id`),
+  CONSTRAINT `fk_errors_runerror` FOREIGN KEY (`error_id`) REFERENCES `errors` (`error_id`),
+  CONSTRAINT `fk_runs_runerror` FOREIGN KEY (`run_id`) REFERENCES `runs` (`run_id`),
+  CONSTRAINT `fk_sensors_runerror` FOREIGN KEY (`sensor_id`) REFERENCES `sensors` (`sensor_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -76,7 +102,7 @@ CREATE TABLE `runs` (
   `title` varchar(45) DEFAULT NULL,
   `description` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`run_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -90,7 +116,7 @@ CREATE TABLE `sensor_type` (
   `sensor_type_id` int(11) NOT NULL AUTO_INCREMENT,
   `description` varchar(45) NOT NULL,
   PRIMARY KEY (`sensor_type_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -105,7 +131,24 @@ CREATE TABLE `sensors` (
   `sensor_type_id` int(11) NOT NULL,
   `description` varchar(100) DEFAULT NULL,
   `units` varchar(30) NOT NULL,
-  PRIMARY KEY (`sensor_id`)
+  PRIMARY KEY (`sensor_id`),
+  KEY `fk_sensor_type_idx` (`sensor_type_id`),
+  CONSTRAINT `fk_sensortype_sensors` FOREIGN KEY (`sensor_type_id`) REFERENCES `sensor_type` (`sensor_type_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `users`
+--
+
+DROP TABLE IF EXISTS `users`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `users` (
+  `userid` varchar(30) NOT NULL,
+  `password_hash` varchar(64) NOT NULL,
+  `admin_flag` char(1) NOT NULL,
+  PRIMARY KEY (`userid`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -146,6 +189,29 @@ BEGIN
 	IF (SELECT COUNT(*) FROM runs WHERE run_id = _run_id) = 1 THEN
 		IF (SELECT COUNT(*) FROM sensors WHERE sensor_id = _sensor_id) = 1 THEN
 			INSERT INTO readings (run_id, sensor_id, reading, timestamp) VALUES (_run_id, _sensor_id, _reading, _timestamp);
+		END IF;
+	END IF;
+END ;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
+/*!50003 DROP PROCEDURE IF EXISTS `create_reading_no_timestamp` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8 */ ;
+/*!50003 SET character_set_results = utf8 */ ;
+/*!50003 SET collation_connection  = utf8_general_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION' */ ;
+DELIMITER ;;
+CREATE DEFINER=`andrew`@`%` PROCEDURE `create_reading_no_timestamp`(IN _run_id INT(11), IN _sensor_id INT(11), IN _reading DECIMAL(8,0))
+BEGIN
+	IF (SELECT COUNT(*) FROM runs WHERE run_id = _run_id) = 1 THEN
+		IF (SELECT COUNT(*) FROM sensors WHERE sensor_id = _sensor_id) = 1 THEN
+			INSERT INTO readings (run_id, sensor_id, reading) VALUES (_run_id, _sensor_id, _reading);
 		END IF;
 	END IF;
 END ;;
@@ -368,6 +434,29 @@ DELIMITER ;
 /*!50003 SET character_set_client  = @saved_cs_client */ ;
 /*!50003 SET character_set_results = @saved_cs_results */ ;
 /*!50003 SET collation_connection  = @saved_col_connection */ ;
+/*!50003 DROP PROCEDURE IF EXISTS `getSensorsInRun` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8 */ ;
+/*!50003 SET character_set_results = utf8 */ ;
+/*!50003 SET collation_connection  = utf8_general_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION' */ ;
+DELIMITER ;;
+CREATE DEFINER=`andrew`@`%` PROCEDURE `getSensorsInRun`(IN _run_id INT(11))
+BEGIN
+	SELECT s.sensor_id, st.sensor_type_id, st.description AS sensor_type_description, s.description, s.units
+    FROM sensors AS s
+    JOIN sensor_type AS st
+		ON s.sensor_type_id = st.sensor_type_id
+    WHERE sensor_id IN (SELECT DISTINCT sensor_id FROM readings WHERE run_id = _run_id);
+END ;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
 /*!50003 DROP PROCEDURE IF EXISTS `get_all_errors` */;
 /*!50003 SET @saved_cs_client      = @@character_set_client */ ;
 /*!50003 SET @saved_cs_results     = @@character_set_results */ ;
@@ -539,6 +628,25 @@ DELIMITER ;
 /*!50003 SET character_set_client  = @saved_cs_client */ ;
 /*!50003 SET character_set_results = @saved_cs_results */ ;
 /*!50003 SET collation_connection  = @saved_col_connection */ ;
+/*!50003 DROP PROCEDURE IF EXISTS `get_reading_sensor_sorted` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8 */ ;
+/*!50003 SET character_set_results = utf8 */ ;
+/*!50003 SET collation_connection  = utf8_general_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION' */ ;
+DELIMITER ;;
+CREATE DEFINER=`andrew`@`%` PROCEDURE `get_reading_sensor_sorted`(IN _sensor_id INT(11))
+BEGIN
+	SELECT reading, timestamp FROM readings WHERE sensor_id = _sensor_id ORDER BY timestamp desc;
+END ;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
 /*!50003 DROP PROCEDURE IF EXISTS `get_run` */;
 /*!50003 SET @saved_cs_client      = @@character_set_client */ ;
 /*!50003 SET @saved_cs_results     = @@character_set_results */ ;
@@ -685,6 +793,29 @@ DELIMITER ;;
 CREATE DEFINER=`andrew`@`%` PROCEDURE `get_sensor`(IN _sensor_id INT(11))
 BEGIN
 	SELECT * FROM sensors WHERE sensor_id = _sensor_id;
+END ;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
+/*!50003 DROP PROCEDURE IF EXISTS `get_sensors_in_run` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8 */ ;
+/*!50003 SET character_set_results = utf8 */ ;
+/*!50003 SET collation_connection  = utf8_general_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION' */ ;
+DELIMITER ;;
+CREATE DEFINER=`andrew`@`%` PROCEDURE `get_sensors_in_run`(IN _run_id INT(11))
+BEGIN
+	SELECT s.sensor_id, st.sensor_type_id, st.description AS sensor_type_description, s.description, s.units
+    FROM sensors AS s
+    JOIN sensor_type AS st
+		ON s.sensor_type_id = st.sensor_type_id
+    WHERE sensor_id IN (SELECT DISTINCT sensor_id FROM readings WHERE run_id = _run_id);
 END ;;
 DELIMITER ;
 /*!50003 SET sql_mode              = @saved_sql_mode */ ;
@@ -959,6 +1090,27 @@ DELIMITER ;
 /*!50003 SET character_set_client  = @saved_cs_client */ ;
 /*!50003 SET character_set_results = @saved_cs_results */ ;
 /*!50003 SET collation_connection  = @saved_col_connection */ ;
+/*!50003 DROP PROCEDURE IF EXISTS `send_start_command` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8 */ ;
+/*!50003 SET character_set_results = utf8 */ ;
+/*!50003 SET collation_connection  = utf8_general_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION' */ ;
+DELIMITER ;;
+CREATE DEFINER=`andrew`@`%` PROCEDURE `send_start_command`()
+BEGIN
+	IF (SELECT COUNT(*) FROM commands WHERE time_sent IS NULL) = 0
+		THEN INSERT INTO commands (command_type) VALUES ('START');
+	END IF;
+END ;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
@@ -969,4 +1121,4 @@ DELIMITER ;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2018-03-03  0:39:38
+-- Dump completed on 2018-04-02 16:41:29
