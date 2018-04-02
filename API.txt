@@ -1,3 +1,7 @@
+// Utility API
+GET		/reading/getchartdata/x	NA					Gets all the readings for run x in a format usable with chartjs
+POST	/startrun				send_start_command	Creates an entry in the commands table with a START command_type if no pending ones exist		
+
 // Run API
 GET		/run					get_all_runs				Get all runs
 GET		/run/x					get_run(x)					Get run where run_id == x

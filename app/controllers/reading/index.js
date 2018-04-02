@@ -12,6 +12,37 @@ DELETE	/reading/sensor/x							remove_reading_sensor(x)		Delete all readings whe
 */
 
 module.exports = {
+	getChartData: function(req, res) {
+		let run_id = req.params.run;
+		
+		if (!run_id) {
+			return res.status(400).send({error: true, message: 'Please provide a run_id!'});
+		}
+		
+		var data = {};
+		/*
+		*	data will be formated as an array of objects like
+		*	{sensor: sensor_id, description: sensor_description, sensor_type: sensor_type_id, sensor_type_description: sensor_type_description,
+		*	lables: list of timestamps corresponding to data,
+		*	data: sensor readings}
+		*/
+		
+		dbConnection.query("CALL get_sensors_in_run(?)", run_id,
+		function(error, results, fields) {
+			if (error) throw error;
+			var sensors = results.data[0];
+			var index;
+			for (index = 0; index < sensors.length; ++index) {
+				var sensor = sensors[index];
+				dbConnection.query("CALL get_reading_sensor_sorted(?)", sensor.sensor_id,
+				function(error, results, fields) {
+					if (error) throw error;
+					
+				});
+			}
+			//return res.send({error: error, data: results, message: "Requested reading(s)"});
+		});
+	},
 	getOne: function(req, res) {
 		let read_id = req.params.id;
 		
