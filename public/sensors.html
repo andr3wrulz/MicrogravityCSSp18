@@ -2,8 +2,45 @@
 <head>
 	<title>Ground Control</title>
 	<link rel="stylesheet" href="styles.css">
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
 	<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.6/angular.min.js"></script>
 </head>
+<style>
+	table {
+		font-family: arial, sans-serif;
+		border-collapse: collapse;
+		width: 60%;
+		margin: 0px auto;
+	}
+
+	td, th {
+		border: 1px solid #000000;
+		text-align: left;
+		padding: 8px;
+	}
+	
+	tr:nth-child(1) {
+		background-color: #dddddd;
+	}
+	
+	.button {
+		padding: 10px 40px;
+		border-radius: 8px;
+		border: none;
+		color: white;
+		bottom: 20px;
+	}
+	
+	.newb {background-color: #4caf50;}
+	
+	.modb {background-color: #008cba;}
+	
+	.delb {background-color: #F44336;}
+	
+	.buttons {padding: 20px;}
+	
+	.formsection {padding: 20px; display: none;}
+</style>
 <body>
 	<div class="navbar">
 		<div class="navbarHome">
@@ -16,7 +53,95 @@
 	</div>
 
 	<div class="main">
-	  <p>Some text some text some text some text..</p>
+		<h1>Sensors</h1>
+		<div class="buttons">
+		<button class="button newb" id="newb">
+			+ New
+		</button>
+		<button class="button modb" id="modb">
+			Modify
+		</button>
+		<button class="button delb" id="delb">
+			Delete
+		</button>
+		</div>
+		<div class="formsection" id="formsection">
+			<form action="">
+				<input type="text" id="sid">
+				<input type="text" id="stype">
+				<input type="text" id="desc">
+				<input type="text" id="unit">
+			</form>
+			<button id="submit">
+				Submit
+			</button>
+		</div>
+		<table id="myTable">
+			<tr>
+				<th><input type="checkbox" id="allCheck" onclick=""></th>
+				<th>Sensor ID</th>
+				<th>Sensor Type</th>
+				<th>Description</th>
+				<th>Units</th>
+			</tr>
+			<tr>
+				<td><input type="checkbox" class="cb" onclick=""></td>
+				<td>1</td>
+				<td>1</td>
+				<td>Velocity Sensor 1</td>
+				<td>meters/second</td>
+			</tr>
+			<tr>
+				<td><input type="checkbox" class="cb" onclick=""></td>
+				<td>2</td>
+				<td>1</td>
+				<td>Velocity Sensor 2</td>
+				<td>meters/second</td>
+			</tr>
+			<tr>
+				<td><input type="checkbox" class="cb" onclick=""></td>
+				<td>3</td>
+				<td>2</td>
+				<td>Acceleration Sensor 1</td>
+				<td>meters/second^2</td>
+			</tr>
+			<tr>
+				<td><input type="checkbox" class="cb" onclick=""></td>
+				<td>4</td>
+				<td>3</td>
+				<td>Position Sensor 1</td>
+				<td>meters</td>
+			</tr>
+		</table>
+		<script>
+			var table = document.getElementById("myTable");
+			
+			$("#newb").on("click", function() {
+				$("#formsection").toggle();
+			});
+			$("#submit").on("click", function() {
+				var sensorID = $("#sid").val();
+				var sensorType = $("#stype").val();
+				var description = $("#desc").val();
+				var units = $("#unit").val();
+				
+				var row = table.insertRow(document.getElementById("myTable").rows.length)
+				var cell0 = row.insertCell(0);
+				var cell1 = row.insertCell(1);
+				var cell2 = row.insertCell(2);
+				var cell3 = row.insertCell(3);
+				var cell4 = row.insertCell(4);
+				
+				//cell0.innerHTML = <input type="checkbox" class="cb" onclick="">;
+				cell1.innerHTML = sensorID;
+				cell2.innerHTML = sensorType;
+				cell3.innerHTML = description;
+				cell4.innerHTML = units;
+			});
+			$("#delb").on("click", function() {
+				$('.cb:checked').closest('tr').remove();
+			});
+		</script>
 	</div>
 </body>
 </html>

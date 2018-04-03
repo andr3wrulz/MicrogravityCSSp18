@@ -1,6 +1,8 @@
 /*
 GET		/run					get_all_runs				Get all runs
+GET		/run/latest				get_latest_run				Retrieves the highest run number
 GET		/run/x					get_run(x)					Get run where run_id == x
+POST	/run/startrun			send_start_command			Creates an entry in the commands table with a START command_type if no pending ones exist	
 POST	/run					create_run()				Create a new run
 POST	/run/title/x			create_run_title(x)			Create a new run with title x
 POST	/run/title/x/desc/y		create_run_title_desc(x, y)	Create a new run with title x and description y
@@ -16,6 +18,13 @@ module.exports = {
 			return res.send({error: error, data: results, message: "All runs"});
 		});
 	},
+	getLatest: function(req, res) {
+		dbConnection.query("SELECT MAX(run_id) AS run_id from runs",
+		function(error, results, fields) {
+			if (error) throw error;
+			return res.send(results[0]);
+		});
+	},
 	getOne: function(req, res) {
 		let run_id = req.params.id;
 		
@@ -27,6 +36,13 @@ module.exports = {
 		function(error, results, fields) {
 			if (error) throw error;
 			return res.send({error: error, data: results, message: "Requested run"});
+		});
+	},
+	startRun: function(req, res) {
+		dbConnection.query("CALL send_start_command()",
+		function(error, results, fields) {
+			if (error) throw error;
+			return res.send(results);
 		});
 	},
 	create: function(req, res) {		

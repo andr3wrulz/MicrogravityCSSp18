@@ -2,46 +2,40 @@
 <head>
 	<title>Ground Control</title>
 	<link rel="stylesheet" href="styles.css">
-	<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
 	<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.6/angular.min.js"></script>
-	<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.22.0/moment.js"></script>
-	<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.2/Chart.min.js"></script>
 </head>
+<style>
+	.loginBox{width:800px; margin:0 auto; padding: 200px 50px;)
+</style>
 <body>
 	<div class="navbar">
 		<div class="navbarHome">
 			<a href="index.html">Home</a>
 		</div>
-		<div class="navbarSettings">
-			<a href="settings.html">Settings</a>
-			<a href="login.html">Logout</a>
-		</div>
 	</div>
 
 	<center>
-	<div class="main">
-		<canvas id="myChart" width="400" height="400"></canvas>
-		<script>
-		var ctx = document.getElementById("myChart");
-		var myChart = new Chart(ctx, {
-			type: 'scatter',
-			data: [
-			  {x: moment("2017-07-08T06:15:02-0600"), y: 23.375},
-			  {x: moment("2017-07-08T06:20:02-0600"),y: 23.312},
-			  {x: moment("2017-07-08T06:25:02-0600"),y: 23.312},
-			  {x: moment("2017-07-08T06:30:02-0600"),y: 23.25}
-			],
-			options: {
-				scales: {
-					xAxes: [{
-						type: 'time',
-						distribution: 'series'
-					}]
-				}
-			}
-		});
-		</script>
+	<div class="main" ng-app="myApp" ng-controller="myCtrl">
+		<div class="loginBox">
+			<h1>Login</h1>
+			<label for="uname"><b>Username</b></label>
+			<input type="text" placeholder="Enter Username" name="uname" required ng-model="username">
+
+			<label for="psw"><b>Password</b></label>
+			<input type="password" placeholder="Enter Password" name="psw" required ng-model="password">
+
+			<button type="submit" ng-click="submit()">Login</button>
+		</div>
 	</div>
+	
+	<script>
+		var app = angular.module('myApp', []);
+		app.controller('myCtrl', function($scope, $http) {
+			$scope.submit = function () {
+				
+			};
+		});
+	</script>
 	</center>
 </body>
 </html>

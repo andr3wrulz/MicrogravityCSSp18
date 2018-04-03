@@ -1,0 +1,127 @@
+<html>
+<head>
+	<title>Ground Control</title>
+	<link rel="stylesheet" href="styles.css">
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+	<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.6/angular.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.2/Chart.min.js"></script>
+</head>
+<style>
+	.main{width:800px;)
+</style>
+<body>
+	<div class="navbar">
+		<div class="navbarHome">
+			<a href="index.html">Home</a>
+		</div>
+		<div class="navbarSettings">
+			<a href="settings.html">Settings</a>
+			<a href="login.html">Logout</a>
+		</div>
+	</div>
+
+	<center>
+	<div class="main" ng-app="myApp" ng-controller="myCtrl">
+		<div>
+			<button class="startTest" ng-click="startTest()">Start Test</button>
+			<button class="stopTest" ng-click="stopTest()">Stop Test</button>
+			<button class="displayTest" ng-click="displayTest()">Display Latest Run</button>
+		</div>
+		<!--
+		<ul>
+			<li ng-repeat="s in sensors">
+				{{ s.sensor_id + ': ' + s.description + ' is a(n) ' + s.sensor_type_description + ' that measures in ' + s.units}}
+			</li>
+		</ul>
+		-->
+		
+		<div ng-repeat="s in sensors">
+			<h1>{{s.description + ' (' + s.units + ')'}}</h1>
+			<canvas id="chart{{s.sensor_id}}" width="400" height="400"></canvas>
+			{{ createChart(s) }}
+		</div>
+		
+	</div>
+	</center>
+	<script>
+		// Controller for main app
+		var app = angular.module('myApp', []);
+		app.controller('myCtrl', function($scope, $http) {
+			$scope.run_id = 1;
+			$scope.createChart = function (sensor) {
+				//console.log(JSON.stringify(sensor));
+				console.log("Creating chart " + sensor.sensor_id);
+				var ctx = document.getElementById("chart" + sensor.sensor_id);
+				var chart = new Chart(ctx, {
+					type: 'line',
+					data: {
+						lables: {},
+						datasets: [{
+							label: 'Readings in ' + sensor.units,
+							data: {}
+						}]
+					},
+					options: {
+						title: {
+							display: true,
+							text: sensor.description
+						}
+					}
+				});
+				
+				//console.log(chart);
+				
+				var updateChart = function () {
+					console.log("Updating chart (api/reading/run/" + $scope.run_id + "/sensor/" + sensor.sensor_id + ")");
+					$http({
+						method: "GET",
+						url: "api/reading/run/" + $scope.run_id + "/sensor/" + sensor.sensor_id
+					}).then(function mySuccess(response) {
+						//console.log(JSON.stringify(response));
+						chart.data.labels = response.data[1].map(item => item.timestamp);
+						chart.data.datasets[0].data = response.data[0].map(item => item.reading);
+						chart.update;
+					})
+				};
+				
+				//setInterval(function(){updateChart()}, 5000);
+				setInterval(function(){console.log("Updating chart " + sensor.sensor_id}, 5000);
+			};
+				
+			$scope.getSensors = function () {
+				console.log("Trying to get sensors for run " + $scope.run_id);
+				$http.get("api/reading/getsensorsinrun/" + $scope.run_id)
+				.then(function mySuccess(response) {
+					$scope.sensors = response.data;
+					console.log("Refreshed sensors list");
+					console.log(JSON.stringify($scope.sensors));
+				}, function myFailure (response) {
+					console.log("Could not get sensors for run");
+				})
+			};
+				
+			$scope.displayTest = function () {
+				$http.get("api/run/latest")
+				.then(function mySuccess (response) {
+					//console.log(JSON.stringify(response.data));
+					console.log("Got latest run " + response.data.run_id);
+					$scope.run_id = response.data.run_id;
+					$scope.getSensors();
+				}, function myFailure (response) {
+					console.log("Could not get latest test run");
+				})
+			};
+			
+			$scope.startTest = function () {
+				$http.get("api/run/startrun")
+				.then(function mySuccess(response) {
+					console.log("Started new test");
+					$scope.refreshTest();
+				}, function myFailure (response) {
+					console.log("Could not start new run");
+				});
+			};
+		});
+	</script>
+</body>
+</html>

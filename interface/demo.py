@@ -54,7 +54,7 @@ while time.time() < end_time:
 	db.commit()
 	index += 1
 	
-	if index == 100: # After 400 readings throw an error for fun
+	if index == 100:# After 400 readings throw an error for fun
 		cur.execute("INSERT INTO run_errors (error_id, run_id, sensor_id) VALUES (1, %s, 1)", (run_id,))
 		db.commit()
 	

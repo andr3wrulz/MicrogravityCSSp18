@@ -4,6 +4,16 @@
 	<link rel="stylesheet" href="styles.css">
 	<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.6/angular.min.js"></script>
 </head>
+<style>
+	.main {width: 800px; align: center;}
+	table {border-collapse: collapse;}
+	table, th, td {border: 1px solid black;}
+	td {padding: 10px 20px;}
+	th {font-weight: bold}
+	
+	.new {padding: 50px 20px;}
+
+</style
 <body>
 	<div class="navbar">
 		<div class="navbarHome">
@@ -15,8 +25,53 @@
 		</div>
 	</div>
 
-	<div class="main">
-	  <p>Some text some text some text some text..</p>
+	<center>
+	<div class="main" ng-app="myApp" ng-controller="myCtrl" ng-init="refresh()">
+		<h1>Errors</h1>
+		<div class="new">
+			<label for="type">Error Type</label>
+			<input type="text" name="type" ng-model="type" required>
+			
+			<label for="type">Error Type</label>
+			<input type="text" name="type" ng-model="type" required>
+			
+			<button ng-click="addError">New Error</button>
+		</div>
+		
+		
+		<table>
+			<thead>
+				<tr>
+					<td><h2>Selection</h2></td>
+					<td><h2>Error Id</h2></td>
+					<td><h2>Error Type</h2></td>
+					<td><h2>Error Description</h2></td>
+				</tr>
+			</thead>
+			<tbody ng-repeat="e in errors">
+				<tr>
+					<td><div class="radio"><input type="radio" ng-model="selection"></div></td>
+					<td>{{e.error_id}}</td>
+					<td>{{e.type}}</td>
+					<td>{{e.description}}</td>
+				</tr>
+			</tbody>
+		</table>
 	</div>
+	
+	<script>
+		var app = angular.module('myApp', []);
+		app.controller('myCtrl', function($scope, $http) {
+			$scope.refresh = function () {
+				$http.get('api/error')
+				.then(function success (response) {
+					//console.log(JSON.stringify(response));
+					$scope.errors = response.data.data[0];
+				});
+			};
+			
+			
+		});
+	</script>
 </body>
 </html>

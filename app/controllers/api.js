@@ -10,6 +10,7 @@ module.exports = function(router) {
 	router.delete('/error/:id', errorAPI.remove);
 
 	var readingAPI = require('./reading/index');
+	router.get('/reading/getsensorsinrun/:run', readingAPI.getSensorsInRun);
 	router.get('/reading/:id', readingAPI.getOne);
 	router.get('/reading/run/:run', readingAPI.getByRun);
 	router.get('/reading/run/:run/sensor/:sensor', readingAPI.getByRunAndSensor);
@@ -23,6 +24,7 @@ module.exports = function(router) {
 
 	var runAPI = require('./run/index');
 	router.get('/run', runAPI.getAll);
+	router.get('/run/latest', runAPI.getLatest);
 	router.get('/run/:id', runAPI.getOne);
 	router.post('/run', runAPI.create);
 	router.post('/run/title/:title', runAPI.createWithTitle);

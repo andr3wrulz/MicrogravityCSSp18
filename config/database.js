@@ -4,5 +4,6 @@ module.exports = {
       user     : 'webuser',
       password : 'Super!Secure',
       database : 'ground_control',
+	  multipleStatements: true
  }
 };
