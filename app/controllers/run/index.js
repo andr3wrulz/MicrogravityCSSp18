@@ -19,7 +19,7 @@ module.exports = {
 		});
 	},
 	getLatest: function(req, res) {
-		dbConnection.query("SELECT MAX(run_id) AS run_id from runs",
+		dbConnection.query("SELECT MAX(run_id) AS run_id, (SELECT MIN(r.timestamp) FROM readings AS r WHERE r.run_id = run_id) AS start FROM runs",
 		function(error, results, fields) {
 			if (error) throw error;
 			return res.send(results[0]);
