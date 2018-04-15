@@ -9,8 +9,8 @@ module.exports = function (passport) {
 			console.log(error);
 			return;
 		}
-		console.log("[NOTICE] No admin users found! Creating admin user with username: admin and password: admin");
 		if (results[0].count == 0) {
+			console.log("[NOTICE] No admin users found! Creating admin user with username: admin and password: admin");
 			bcrypt.hash("admin", null, null, function (err, hash) {
 				dbConnection.query("INSERT INTO users (username, password, admin_flag) VALUES (?, ?, ?)", ["admin", hash, 'Y'],
 					function (error, results, fields) {
