@@ -37,26 +37,27 @@ module.exports = function (passport) {
 	// Setup passport
 	passport.use('local-login', new LocalStrategy(
 		function(username, password, done) {
-			console.log("Trying to authenticate");
+			console.log("[NOTICE] Trying to authenticate " + username);
 			dbConnection.query("CALL get_user(?)", username,
 				function(error, results, fields) {
 					if (error) {
-						console.log("Got error when looking for user!");
+						console.log("[ERROR] passport.local-login SQL error finding user!");
 						console.log(error);
 					}
-					console.log(JSON.stringify(results[0][0]));
+					//console.log(JSON.stringify(results[0][0]));
 
-					if (!results.length) {// User didn't exist
-						console.log("User does not exist!");
+					if (!results[0][0]) {// User didn't exist
+						console.log("[ERROR] passport.local-login user (" + username + ") does not exist!");
 						return done(null, false, {message: 'Incorrect username.'});
 					}
 
 					if (!bcrypt.compareSync(password, results[0][0].password)) {// Bad password for user
-						console.log("Incorrect password! exp: [" + password + "], got: [" + results[0][0].password + "]");
+						console.log("[ERROR] passport.login-local incorrect password for user " + username + "! exp: [" + password + "], got: [" + results[0][0].password + "]");
 						return done(null, false, {message: 'Incorrect password.'});
 					}
 
 					// User was authenticated
+					console.log("[NOTICE] User " + username + " was successfully authenticated!");
 					return done(null, results[0]);
 				}
 			);

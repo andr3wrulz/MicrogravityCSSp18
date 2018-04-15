@@ -10,8 +10,6 @@
 	table, th, td {border: 1px solid black;}
 	td {padding: 10px 20px;}
 	th {font-weight: bold}
-	
-	.new {padding: 50px 20px;}
 
 </style>
 <body>
@@ -62,23 +60,31 @@
 	<script>
 		var app = angular.module('myApp', []);
 		app.controller('myCtrl', function($scope, $http) {
-			$scope.type = '';
-			$scope.desc = '';
-
 			$scope.refresh = function () {
-				$http.get('api/users')
+				$http.get('api/user')
 				.then(function success (response) {
 					//console.log(JSON.stringify(response));
-					$scope.users = response.data.data[0];
+					$scope.users = response.data.data;
+					//console.log(JSON.stringify($scope.users));
+					$scope.username = '';
+					$scope.password = '';
 				});
 			};
 			
 			$scope.addUser = function () {
 				console.log("Adding user (" + $scope.username + ', ' + $scope.password + ', ' + $scope.admin + ")!");
-				$http.post('api/user/' + $scope.username + '/password/' + $scope.password + '/admin/' + $scope.admin)
+				var admin_flag = ($scope.admin ? 'Y' : 'N');
+				$http.post('api/user/username/' + $scope.username + '/password/' + $scope.password + '/admin/' + admin_flag)
 				.then(function success (result) {
 					console.log("Successfully added user!");
 					$scope.refresh();
+				}, function failure (result) {
+					if (result.data.error.code == "ER_DUP_ENTRY") {
+						alert("That user already exists!");
+						return;
+					}
+					alert("Failed to add user!");
+					console.log(JSON.stringify(result.data.error));
 				});
 			};
 
@@ -90,7 +96,7 @@
 				}
 
 				console.log("Deleting user " + username);
-				$http.delete('api/user/' + username)
+				$http.delete('api/user/username/' + username)
 				.then(function success (result) {
 					console.log("Successfully deleted user!");
 					$scope.refresh();

@@ -38,19 +38,19 @@ module.exports = function (app, passport, fileDir) {// fileDir should be [projec
 		res.sendFile(fileDir + "login.html");
 	});
 	// settings
-	app.get('/settings.html', auth, function (req, res) {
+	app.get('/settings.html', auth, reqAdmin, function (req, res) {
 		res.sendFile(fileDir + 'settings.html');
 	});
 	// errors
-	app.get('/errors.html', auth, function (req, res) {
+	app.get('/errors.html', auth, reqAdmin, function (req, res) {
 		res.sendFile(fileDir + 'errors.html');
 	});
 	// sensors
-	app.get('/sensors.html', auth, function (req, res) {
+	app.get('/sensors.html', auth, reqAdmin, function (req, res) {
 		res.sendFile(fileDir + 'sensors.html');
 	});
 	// users
-	app.get('/users.html', auth, function (req, res) {
+	app.get('/users.html', auth, reqAdmin, function (req, res) {
 		res.sendFile(fileDir + 'users.html');
 	});
 }
@@ -64,12 +64,24 @@ function isAuthed(req) {
 }
 
 function auth(req, res, next) {
-	console.log("Checking if user is authenticated.");
-	console.log(JSON.stringify(req.user));
+	//console.log("Checking if user is authenticated.");
+	//console.log(JSON.stringify(req.user));
 	// Is the user object part of the request? (only happens after auth)
 	if (!req.user || !req.user[0]) {
 		// Redirect if not logged in
 		res.redirect('/login.html');
+	}
+	// We authenticated, continue the request
+	return next();
+}
+
+function reqAdmin(req, res, next) {
+	console.log("Checking if user is admin.");
+	console.log(JSON.stringify(req.user));
+	// Is the user object part of the request? (only happens after auth)
+	if (!req.user || !req.user[0] || req.user[0].admin_flag != 'Y') {
+		// Redirect if not logged in
+		res.status(403).send({error: true, data: {}, message: "You must be an administrator to access this!"});
 	}
 	// We authenticated, continue the request
 	return next();

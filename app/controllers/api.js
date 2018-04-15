@@ -60,12 +60,16 @@ module.exports = function(router, passport) {
 	router.put('/sensortype/:id/desc/:desc', auth, sensorTypeAPI.modify);
 	router.delete('/sensortype/:id', auth, sensorTypeAPI.remove);
 
-	
+	var userAPI = require('./user');
+	router.get('/user', auth, userAPI.getAll);
+	router.post('/user/username/:username/password/:password/admin/:admin_flag', auth, userAPI.create);
+	router.put('/user/username/:username/password/:password', auth, userAPI.setPassword);
+	router.delete('/user/username/:username', auth, userAPI.remove);
 };
 
 function auth(req, res, next) {
-	console.log("Checking if user is authenticated.");
-	console.log(JSON.stringify(req.user));
+	//console.log("Checking if user is authenticated.");
+	//console.log(JSON.stringify(req.user));
 	// Is the user object part of the request? (only happens after auth)
 	if (!req.user || !req.user[0]) {
 		// Redirect if not logged in

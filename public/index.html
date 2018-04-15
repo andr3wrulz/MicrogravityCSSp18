@@ -23,11 +23,9 @@
 	<div class="main">
 		<div>
 			<canvas id="line-chart" width="800" height="450"></canvas>
+			<canvas id="bline-chart" width="800" height="450"></canvas>
+			<canvas id="cline-chart" width="800" height="450"></canvas>
 	    </div>
-		
-		<div>
-			Show/Hide Velocity: <input type="checkbox" id="velCheck" onclick="">
-		</div>
 		
 		<script>
 			var ctx = (document.getElementById("line-chart")).getContext('2d');
@@ -61,6 +59,30 @@
 				}
 			});
 			
+			ctx = (document.getElementById("bline-chart")).getContext('2d');
+			var mybChart = new Chart(ctx, {
+				type: 'line',
+				data: startingData,
+				options: {
+					title: {
+						display: true,
+						text: 'Live Drop Data'
+					}
+				}
+			});
+			
+			ctx = (document.getElementById("cline-chart")).getContext('2d');
+			var mycChart = new Chart(ctx, {
+				type: 'line',
+				data: startingData,
+				options: {
+					title: {
+						display: true,
+						text: 'Live Drop Data'
+					}
+				}
+			});
+			
 			setInterval(function(){
 				//var newReading = get_reading_run(1);
 				//console.log("Reading: "+newReading);
@@ -68,25 +90,13 @@
   
 				// Update one of the points in the second dataset
 				myChart.data.datasets[0].data[indexToUpdate] = Math.random() * 100;
+				mybChart.data.datasets[0].data[indexToUpdate] = Math.random() * 100;
+				mycChart.data.datasets[0].data[indexToUpdate] = Math.random() * 100;
   
 				myChart.update();
+				mybChart.update();
+				mycChart.update();
 			}, 500);
-			
-			//$("#velCheck").change(function() {
-			//	if (this.checked)
-			//	{
-			//		
-			//	}
-			//});
-			
-			$("#btn1").on("click", function() {
-				myChart.data.datasets.push(velData);
-				myChart.update();
-			});
-			$("#btn2").on("click", function() {
-				myChart.data.datasets.splice(1,1);
-				myChart.update();
-			});
 		</script>
 	</div>
 	</center>
