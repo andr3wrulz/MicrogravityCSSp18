@@ -3,7 +3,7 @@
 	<title>Ground Control</title>
 	<link rel="stylesheet" href="styles.css">
 	<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.6/angular.min.js"></script>
-	<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.2/Chart.min.js"></script>
+	<script src="https://d3js.org/d3.v4.min.js"></script>
 	<script src="index.js"></script>
 </head>
 <style>
@@ -16,7 +16,7 @@
 		</div>
 		<div class="navbarSettings">
 			<a href="settings.html">Settings</a>
-			<a href="login.html">Logout</a>
+			<a href="logout">Logout</a>
 		</div>
 	</div>
 
@@ -34,7 +34,7 @@
 			<hr>
 			<div>
 				<h1>{{s.description}}</h1>
-				<chart sensor="s"></chart>
+				<svg id="svg{{s.sensor_id}}" width="800" height="500"></svg>
 			</div>
 		</div>
 	</div>

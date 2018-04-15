@@ -4,6 +4,16 @@
 	<link rel="stylesheet" href="styles.css">
 	<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.6/angular.min.js"></script>
 </head>
+<style>
+	.main {width: 800px; align: center;}
+	table {border-collapse: collapse;}
+	table, th, td {border: 1px solid black;}
+	td {padding: 10px 20px;}
+	th {font-weight: bold}
+	
+	.new {padding: 50px 20px;}
+
+</style>
 <body>
 	<div class="navbar">
 		<div class="navbarHome">
@@ -11,12 +21,45 @@
 		</div>
 		<div class="navbarSettings">
 			<a href="settings.html">Settings</a>
-			<a href="login.html">Logout</a>
+			<a href="logout">Logout</a>
 		</div>
 	</div>
 
+	<center>
 	<div class="main">
-	  <p>Some text some text some text some text..</p>
+		<h1>Users</h1>
+		<form name="newUser">
+			<label for="name">Username:</label>
+			<input type="text" name="name" required>
+			
+			<label for="password">Password:</label>
+			<input type="text" name="password" required>
+			
+			<label for="level">Permission Level:</label>
+			<input type="text" name="level" required>
+			
+			<button>New User</button>
+		</form>
+		
+		
+		<table align="center">
+			<thead>
+				<tr>
+					<td><h2>Username</h2></td>
+					<td><h2>Password</h2></td>
+					<td><h2>Permission Level</h2></td>
+					<td><h2>Delete?</h2></td>
+				</tr>
+			</thead>
+			<tbody>
+				<tr>
+					<td>p.ryan</td>
+					<td>microgravity</td>
+					<td>admin</td>
+					<td align="center"><button>Delete</button></td>
+				</tr>
+			</tbody>
+		</table>
 	</div>
 </body>
 </html>

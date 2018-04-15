@@ -5,37 +5,29 @@
 	<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.6/angular.min.js"></script>
 </head>
 <style>
-	.loginBox{width:800px; margin:0 auto; padding: 200px 50px;)
+	.loginBox{width:800px; margin:0 auto; padding: 200px 50px;}
+	.title{color:white; font-size: 28px; padding: 14px 16px;}
 </style>
 <body>
 	<div class="navbar">
-		<div class="navbarHome">
-			<a href="index.html">Home</a>
+		<div class="title">
+			Ground Control
 		</div>
 	</div>
 
 	<center>
-	<div class="main" ng-app="myApp" ng-controller="myCtrl">
-		<div class="loginBox">
+	<div class="main">
+		<form action="/login" method="post" class="loginBox">
 			<h1>Login</h1>
-			<label for="uname"><b>Username</b></label>
-			<input type="text" placeholder="Enter Username" name="uname" required ng-model="username">
+			<label for="username"><b>Username</b></label>
+			<input type="text" placeholder="Enter Username" name="username" required>
 
-			<label for="psw"><b>Password</b></label>
-			<input type="password" placeholder="Enter Password" name="psw" required ng-model="password">
+			<label for="password"><b>Password</b></label>
+			<input type="password" placeholder="Enter Password" name="password" required>
 
-			<button type="submit" ng-click="submit()">Login</button>
-		</div>
+			<button type="submit">Login</button>
+		</form>
 	</div>
-	
-	<script>
-		var app = angular.module('myApp', []);
-		app.controller('myCtrl', function($scope, $http) {
-			$scope.submit = function () {
-				
-			};
-		});
-	</script>
 	</center>
 </body>
 </html>

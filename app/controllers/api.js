@@ -1,62 +1,76 @@
 // Each table has its own file to keep structure organized
 // All routes are defined in this file and link to the call in the table's file
 
-module.exports = function(router) {
+module.exports = function(router, passport) {
 	var errorAPI = require('./error/index');
-	router.get('/error', errorAPI.getAll);
-	router.get('/error/:id', errorAPI.getOne);
-	router.post('/error/type/:type/desc/:desc', errorAPI.create);
-	router.put('/error/:id/type/:type/desc/:desc', errorAPI.modify);
-	router.delete('/error/:id', errorAPI.remove);
+	router.get('/error', auth, auth, errorAPI.getAll);
+	router.get('/error/:id', auth, errorAPI.getOne);
+	router.post('/error/type/:type/desc/:desc', auth, errorAPI.create);
+	router.put('/error/:id/type/:type/desc/:desc', auth, errorAPI.modify);
+	router.delete('/error/:id', auth, errorAPI.remove);
 
 	var readingAPI = require('./reading/index');
-	router.get('/reading/getsensorsinrun/:run', readingAPI.getSensorsInRun);
-	router.get('/reading/:id', readingAPI.getOne);
-	router.get('/reading/run/:run', readingAPI.getByRun);
-	router.get('/reading/run/:run/sensor/:sensor', readingAPI.getByRunAndSensor);
-	router.get('/reading/after/:after_time/before/:before_time', readingAPI.getByTime);
-	router.post('/reading/run/:run/sensor/:sensor/reading/:reading', readingAPI.createWithoutTime);
-	router.post('/reading/run/:run/sensor/:sensor/reading/:reading/time/:time', readingAPI.createWithTime);
-	router.put('/reading/:id/value/:value', readingAPI.modify);
-	router.delete('/reading/:id', readingAPI.remove);
-	router.delete('/reading/run/:run', readingAPI.removeByRun);
-	router.delete('/reading/sensor/:sensor', readingAPI.removeBySensor);
+	router.get('/reading/getsensorsinrun/:run', auth, readingAPI.getSensorsInRun);
+	router.get('/reading/:id', auth, readingAPI.getOne);
+	router.get('/reading/run/:run', auth, readingAPI.getByRun);
+	router.get('/reading/run/:run/sensor/:sensor', auth, readingAPI.getByRunAndSensor);
+	router.get('/reading/after/:after_time/before/:before_time', auth, readingAPI.getByTime);
+	router.post('/reading/run/:run/sensor/:sensor/reading/:reading', auth, readingAPI.createWithoutTime);
+	router.post('/reading/run/:run/sensor/:sensor/reading/:reading/time/:time', auth, readingAPI.createWithTime);
+	router.put('/reading/:id/value/:value', auth, readingAPI.modify);
+	router.delete('/reading/:id', auth, readingAPI.remove);
+	router.delete('/reading/run/:run', auth, readingAPI.removeByRun);
+	router.delete('/reading/sensor/:sensor', auth, readingAPI.removeBySensor);
 
 	var runAPI = require('./run/index');
-	router.get('/run', runAPI.getAll);
-	router.get('/run/latest', runAPI.getLatest);
-	router.get('/run/:id', runAPI.getOne);
-	router.post('/run', runAPI.create);
-	router.post('/run/title/:title', runAPI.createWithTitle);
-	router.post('/run/title/:title/desc/:desc', runAPI.createWithDetails);
-	router.put('/run/:id/title/:title/desc/:desc', runAPI.modify);
-	router.delete('/run/:id', runAPI.remove);
+	router.get('/run', auth, runAPI.getAll);
+	router.get('/run/latest', auth, runAPI.getLatest);
+	router.get('/run/:id', auth, runAPI.getOne);
+	router.post('/run', auth, runAPI.create);
+	router.post('/run/title/:title', auth, runAPI.createWithTitle);
+	router.post('/run/title/:title/desc/:desc', auth, runAPI.createWithDetails);
+	router.put('/run/:id/title/:title/desc/:desc', auth, runAPI.modify);
+	router.delete('/run/:id', auth, runAPI.remove);
 	
 	var runErrorAPI = require('./runerror/index');
-	router.get('/runerror/:id', runErrorAPI.getOne);
-	router.get('/runerror/run/:run', runErrorAPI.getByRun);
-	router.get('/runerror/error/:error_id', runErrorAPI.getByError);
-	router.get('/runerror/after/:after_time', runErrorAPI.getAfter);
-	router.get('/runerror/before/:before_time', runErrorAPI.getBefore);
-	router.get('/runerror/after/:after_time/before/:before_time', runErrorAPI.getByTime);
-	router.post('/runerror/run/:run/error/:error', runErrorAPI.create);
-	router.post('/runerror/run/:run/error/:error/sensor/:sensor', runErrorAPI.createWithSensor);
-	router.post('/runerror/run/:run/error/:error/time/:time', runErrorAPI.createWithTime);
-	router.post('/runerror/run/:run/error/:error/sensor/:sensor/time/:time', runErrorAPI.createWithAll);
-	router.delete('/runerror/:id', runErrorAPI.remove);
+	router.get('/runerror/:id', auth, runErrorAPI.getOne);
+	router.get('/runerror/run/:run', auth, runErrorAPI.getByRun);
+	router.get('/runerror/error/:error_id', auth, runErrorAPI.getByError);
+	router.get('/runerror/after/:after_time', auth, runErrorAPI.getAfter);
+	router.get('/runerror/before/:before_time', auth, runErrorAPI.getBefore);
+	router.get('/runerror/after/:after_time/before/:before_time', auth, runErrorAPI.getByTime);
+	router.post('/runerror/run/:run/error/:error', auth, runErrorAPI.create);
+	router.post('/runerror/run/:run/error/:error/sensor/:sensor', auth, runErrorAPI.createWithSensor);
+	router.post('/runerror/run/:run/error/:error/time/:time', auth, runErrorAPI.createWithTime);
+	router.post('/runerror/run/:run/error/:error/sensor/:sensor/time/:time', auth, runErrorAPI.createWithAll);
+	router.delete('/runerror/:id', auth, runErrorAPI.remove);
 	
 	var sensorAPI = require('./sensor/index');
-	router.get('/sensor', sensorAPI.getAll);
-	router.get('/sensor/:id', sensorAPI.getOne);
-	router.post('/sensor/type/:type/units/:units', sensorAPI.create);
-	router.post('/sensor/type/:type/units/:units/desc/:desc', sensorAPI.createWithDescription);
-	router.put('/sensor/:id/type/:type/units/:units/desc/:desc', sensorAPI.modify);
-	router.delete('/sensor/:id', sensorAPI.remove);
+	router.get('/sensor', auth, sensorAPI.getAll);
+	router.get('/sensor/:id', auth, sensorAPI.getOne);
+	router.post('/sensor/type/:type/units/:units', auth, sensorAPI.create);
+	router.post('/sensor/type/:type/units/:units/desc/:desc', auth, sensorAPI.createWithDescription);
+	router.put('/sensor/:id/type/:type/units/:units/desc/:desc', auth, sensorAPI.modify);
+	router.delete('/sensor/:id', auth, sensorAPI.remove);
 	
 	var sensorTypeAPI = require('./sensortype/index');
-	router.get('/sensortype', sensorTypeAPI.getAll);
-	router.get('/sensortype/:id', sensorTypeAPI.getOne);
-	router.post('/sensortype/desc/:desc', sensorTypeAPI.create);
-	router.put('/sensortype/:id/desc/:desc', sensorTypeAPI.modify);
-	router.delete('/sensortype/:id', sensorTypeAPI.remove);
+	router.get('/sensortype', auth, sensorTypeAPI.getAll);
+	router.get('/sensortype/:id', auth, sensorTypeAPI.getOne);
+	router.post('/sensortype/desc/:desc', auth, sensorTypeAPI.create);
+	router.put('/sensortype/:id/desc/:desc', auth, sensorTypeAPI.modify);
+	router.delete('/sensortype/:id', auth, sensorTypeAPI.remove);
+
+	
 };
+
+function auth(req, res, next) {
+	console.log("Checking if user is authenticated.");
+	console.log(JSON.stringify(req.user));
+	// Is the user object part of the request? (only happens after auth)
+	if (!req.user || !req.user[0]) {
+		// Redirect if not logged in
+		res.redirect('/login.html');
+	}
+	// We authenticated, continue the request
+	return next();
+}
