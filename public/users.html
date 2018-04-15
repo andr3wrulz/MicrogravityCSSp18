@@ -26,40 +26,102 @@
 	</div>
 
 	<center>
-	<div class="main">
+	<div class="main" ng-app="myApp" ng-controller="myCtrl" ng-init="refresh()">
 		<h1>Users</h1>
 		<form name="newUser">
-			<label for="name">Username:</label>
-			<input type="text" name="name" required>
+			<label for="username">Username:</label>
+			<input type="text" name="username" ng-model="username" required>
 			
 			<label for="password">Password:</label>
-			<input type="text" name="password" required>
+			<input type="text" name="password" ng-model="password" required>
 			
-			<label for="level">Permission Level:</label>
-			<input type="text" name="level" required>
+			<label for="admin">Admin:</label>
+			<input type="checkbox" name="admin" ng-model="admin" required>
 			
-			<button>New User</button>
+			<button ng-confirm-add>New User</button>
 		</form>
-		
 		
 		<table align="center">
 			<thead>
 				<tr>
 					<td><h2>Username</h2></td>
-					<td><h2>Password</h2></td>
-					<td><h2>Permission Level</h2></td>
+					<td><h2>Admin</h2></td>
 					<td><h2>Delete?</h2></td>
 				</tr>
 			</thead>
 			<tbody>
-				<tr>
-					<td>p.ryan</td>
-					<td>microgravity</td>
-					<td>admin</td>
-					<td align="center"><button>Delete</button></td>
+				<tr ng-repeat="u in users">
+					<td>{{u.username}}</td>
+					<td>{{u.admin_flag}}</td>
+					<td align="center"><button ng-click="deleteUser(u.username)">Delete</button></td>
 				</tr>
 			</tbody>
 		</table>
 	</div>
+
+	<script>
+		var app = angular.module('myApp', []);
+		app.controller('myCtrl', function($scope, $http) {
+			$scope.type = '';
+			$scope.desc = '';
+
+			$scope.refresh = function () {
+				$http.get('api/users')
+				.then(function success (response) {
+					//console.log(JSON.stringify(response));
+					$scope.users = response.data.data[0];
+				});
+			};
+			
+			$scope.addUser = function () {
+				console.log("Adding user (" + $scope.username + ', ' + $scope.password + ', ' + $scope.admin + ")!");
+				$http.post('api/user/' + $scope.username + '/password/' + $scope.password + '/admin/' + $scope.admin)
+				.then(function success (result) {
+					console.log("Successfully added user!");
+					$scope.refresh();
+				});
+			};
+
+			$scope.deleteUser = function (username) {
+				console.log("Started delete on user " + username);
+				if (!window.confirm("Are you sure you want to delete this user?")) {
+					console.log("Cancelled deletion of user " + username);
+					return;
+				}
+
+				console.log("Deleting user " + username);
+				$http.delete('api/user/' + username)
+				.then(function success (result) {
+					console.log("Successfully deleted user!");
+					$scope.refresh();
+				}, function failure (result) {
+					console.error("Failed to delete user!");
+					console.error(result);
+				});
+			};
+		});
+		app.directive('ngConfirmAdd', [function () {
+			return {
+				link: function (scope, element, attr) {
+					element.bind ('click', function (event) {
+						console.log("Started add process with username: " + scope.username + " pw: " + scope.password + " admin: " + scope.admin);
+						if (scope.username == '') {
+							alert("Username cannot be blank!");
+							return;
+						}
+						if (scope.password == '') {
+							alert("Password cannot be blank!");
+							return;
+						}
+						if (!window.confirm("Are you sure you want to add this user?")) {
+							console.log("Cancelled adding new user");
+							return;
+						}
+						scope.$eval(scope.addUser());
+					});
+				}
+			};
+		}]);
+	</script>
 </body>
 </html>
