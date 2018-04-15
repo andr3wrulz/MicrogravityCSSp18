@@ -2,14 +2,14 @@
 // All routes are defined in this file and link to the call in the table's file
 
 module.exports = function(router, passport) {
-	var errorAPI = require('./error/index');
+	var errorAPI = require('./error');
 	router.get('/error', auth, auth, errorAPI.getAll);
 	router.get('/error/:id', auth, errorAPI.getOne);
 	router.post('/error/type/:type/desc/:desc', auth, errorAPI.create);
 	router.put('/error/:id/type/:type/desc/:desc', auth, errorAPI.modify);
 	router.delete('/error/:id', auth, errorAPI.remove);
 
-	var readingAPI = require('./reading/index');
+	var readingAPI = require('./reading');
 	router.get('/reading/getsensorsinrun/:run', auth, readingAPI.getSensorsInRun);
 	router.get('/reading/:id', auth, readingAPI.getOne);
 	router.get('/reading/run/:run', auth, readingAPI.getByRun);
@@ -22,7 +22,7 @@ module.exports = function(router, passport) {
 	router.delete('/reading/run/:run', auth, readingAPI.removeByRun);
 	router.delete('/reading/sensor/:sensor', auth, readingAPI.removeBySensor);
 
-	var runAPI = require('./run/index');
+	var runAPI = require('./run');
 	router.get('/run', auth, runAPI.getAll);
 	router.get('/run/latest', auth, runAPI.getLatest);
 	router.get('/run/:id', auth, runAPI.getOne);
@@ -32,7 +32,7 @@ module.exports = function(router, passport) {
 	router.put('/run/:id/title/:title/desc/:desc', auth, runAPI.modify);
 	router.delete('/run/:id', auth, runAPI.remove);
 	
-	var runErrorAPI = require('./runerror/index');
+	var runErrorAPI = require('./runerror');
 	router.get('/runerror/:id', auth, runErrorAPI.getOne);
 	router.get('/runerror/run/:run', auth, runErrorAPI.getByRun);
 	router.get('/runerror/error/:error_id', auth, runErrorAPI.getByError);
@@ -45,7 +45,7 @@ module.exports = function(router, passport) {
 	router.post('/runerror/run/:run/error/:error/sensor/:sensor/time/:time', auth, runErrorAPI.createWithAll);
 	router.delete('/runerror/:id', auth, runErrorAPI.remove);
 	
-	var sensorAPI = require('./sensor/index');
+	var sensorAPI = require('./sensor');
 	router.get('/sensor', auth, sensorAPI.getAll);
 	router.get('/sensor/:id', auth, sensorAPI.getOne);
 	router.post('/sensor/type/:type/units/:units', auth, sensorAPI.create);
@@ -53,7 +53,7 @@ module.exports = function(router, passport) {
 	router.put('/sensor/:id/type/:type/units/:units/desc/:desc', auth, sensorAPI.modify);
 	router.delete('/sensor/:id', auth, sensorAPI.remove);
 	
-	var sensorTypeAPI = require('./sensortype/index');
+	var sensorTypeAPI = require('./sensortype');
 	router.get('/sensortype', auth, sensorTypeAPI.getAll);
 	router.get('/sensortype/:id', auth, sensorTypeAPI.getOne);
 	router.post('/sensortype/desc/:desc', auth, sensorTypeAPI.create);
