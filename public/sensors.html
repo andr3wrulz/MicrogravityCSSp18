@@ -2,44 +2,17 @@
 <head>
 	<title>Ground Control</title>
 	<link rel="stylesheet" href="styles.css">
-	<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
 	<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.6/angular.min.js"></script>
 </head>
 <style>
-	table {
-		font-family: arial, sans-serif;
-		border-collapse: collapse;
-		width: 60%;
-		margin: 0px auto;
-	}
+	.main {width: 1000px; align: center;}
+	table {border-collapse: collapse;}
+	table, th, td {border: 1px solid black;}
+	td {padding: 10px 20px;}
+	th {font-weight: bold}
+	
+	.new {padding: 50px 20px;}
 
-	td, th {
-		border: 1px solid #000000;
-		text-align: left;
-		padding: 8px;
-	}
-	
-	tr:nth-child(1) {
-		background-color: #dddddd;
-	}
-	
-	.button {
-		padding: 10px 40px;
-		border-radius: 8px;
-		border: none;
-		color: white;
-		bottom: 20px;
-	}
-	
-	.newb {background-color: #4caf50;}
-	
-	.modb {background-color: #008cba;}
-	
-	.delb {background-color: #F44336;}
-	
-	.buttons {padding: 20px;}
-	
-	.formsection {padding: 20px; display: none;}
 </style>
 <body>
 	<div class="navbar">
@@ -52,96 +25,192 @@
 		</div>
 	</div>
 
-	<div class="main">
+	<center>
+	<div class="main" ng-app="myApp" ng-controller="myCtrl" ng-init="refresh()">
 		<h1>Sensors</h1>
-		<div class="buttons">
-		<button class="button newb" id="newb">
-			+ New
-		</button>
-		<button class="button modb" id="modb">
-			Modify
-		</button>
-		<button class="button delb" id="delb">
-			Delete
-		</button>
-		</div>
-		<div class="formsection" id="formsection">
-			<form action="">
-				<input type="text" id="sid">
-				<input type="text" id="stype">
-				<input type="text" id="desc">
-				<input type="text" id="unit">
-			</form>
-			<button id="submit">
-				Submit
-			</button>
-		</div>
-		<table id="myTable">
-			<tr>
-				<th><input type="checkbox" id="allCheck" onclick=""></th>
-				<th>Sensor ID</th>
-				<th>Sensor Type</th>
-				<th>Description</th>
-				<th>Units</th>
-			</tr>
-			<tr>
-				<td><input type="checkbox" class="cb" onclick=""></td>
-				<td>1</td>
-				<td>1</td>
-				<td>Velocity Sensor 1</td>
-				<td>meters/second</td>
-			</tr>
-			<tr>
-				<td><input type="checkbox" class="cb" onclick=""></td>
-				<td>2</td>
-				<td>1</td>
-				<td>Velocity Sensor 2</td>
-				<td>meters/second</td>
-			</tr>
-			<tr>
-				<td><input type="checkbox" class="cb" onclick=""></td>
-				<td>3</td>
-				<td>2</td>
-				<td>Acceleration Sensor 1</td>
-				<td>meters/second^2</td>
-			</tr>
-			<tr>
-				<td><input type="checkbox" class="cb" onclick=""></td>
-				<td>4</td>
-				<td>3</td>
-				<td>Position Sensor 1</td>
-				<td>meters</td>
-			</tr>
-		</table>
-		<script>
-			var table = document.getElementById("myTable");
+		<form name="newSensor">
+			<label for="type">Sensor Type:</label>
+			<select ng-model="type" required>
+				<option ng-repeat="st in sensor_types">{{st.description}}</option>
+			</select>
 			
-			$("#newb").on("click", function() {
-				$("#formsection").toggle();
-			});
-			$("#submit").on("click", function() {
-				var sensorID = $("#sid").val();
-				var sensorType = $("#stype").val();
-				var description = $("#desc").val();
-				var units = $("#unit").val();
-				
-				var row = table.insertRow(document.getElementById("myTable").rows.length)
-				var cell0 = row.insertCell(0);
-				var cell1 = row.insertCell(1);
-				var cell2 = row.insertCell(2);
-				var cell3 = row.insertCell(3);
-				var cell4 = row.insertCell(4);
-				
-				//cell0.innerHTML = <input type="checkbox" class="cb" onclick="">;
-				cell1.innerHTML = sensorID;
-				cell2.innerHTML = sensorType;
-				cell3.innerHTML = description;
-				cell4.innerHTML = units;
-			});
-			$("#delb").on("click", function() {
-				$('.cb:checked').closest('tr').remove();
-			});
-		</script>
+			<label for="desc">Sensor Description:</label>
+			<input type="text" ng-model="desc" required>
+
+			<label for="units">Units:</label>
+			<input type="text" ng-model="units" required>
+			
+			<button ng-confirm-add>New Sensor</button>
+		</form>
+		
+		<table align="center">
+			<thead>
+				<tr>
+					<td><h2>Sensor Id</h2></td>
+					<td><h2>Sensor Type</h2></td>
+					<td><h2>Sensor Description</h2></td>
+					<td><h2>Units</h2></td>
+					<td><h2>Delete?</h2></td>
+				</tr>
+			</thead>
+			<tbody ng-repeat="s in sensors">
+				<tr>
+					<td>{{s.sensor_id}}</td>
+					<td>{{s.sensor_type_id}} : {{s.sensor_type_description}}</td>
+					<td>{{s.description}}</td>
+					<td>{{s.units}}</td>
+					<td align="center"><button ng-click="deleteSensor(s.sensor_id)">Delete</button></td>
+				</tr>
+			</tbody>
+		</table>
+
+		<br><hr>
+
+		<h1>Sensor Types (Groups)</h1>
+		<form name="newSensorType">
+				<label for="type">Sensor Type Description:</label>
+				<input type="text" ng-model="type_description" required>
+
+				<button ng-confirm-add-type>New Sensor Type</button>
+		</form>
+
+		<table align="center">
+				<thead>
+					<tr>
+						<td><h2>Sensor Id</h2></td>
+						<td><h2>Sensor Type Description</h2></td>
+						<td><h2>Delete?</h2></td>
+					</tr>
+				</thead>
+				<tbody ng-repeat="s in sensor_types">
+					<tr>
+						<td>{{s.sensor_type_id}}</td>
+						<td>{{s.description}}</td>
+						<td align="center"><button ng-click="deleteSensorType(s.sensor_type_id)">Delete</button></td>
+					</tr>
+				</tbody>
+			</table>
 	</div>
+	
+	<script>
+		var app = angular.module('myApp', []);
+		app.controller('myCtrl', function($scope, $http) {
+			$scope.type = '';
+			$scope.desc = '';
+
+			$scope.refresh = function () {
+				$http.get('api/sensor')
+				.then(function success (response) {
+					console.log(JSON.stringify(response.data.data[0]));
+					$scope.sensors = response.data.data[0];
+				});
+				$http.get('api/sensortype')
+				.then(function success (response) {
+					console.log(JSON.stringify(response.data.data[0]));
+					$scope.sensor_types = response.data.data[0];
+				});
+			};
+			
+			$scope.addSensor = function () {
+				var type_id = $scope.sensor_types.find(x => x.description === $scope.type).sensor_type_id;
+				var desc = $scope.desc || 'NA';
+				var units = $scope.units || 'NA';
+				console.log("Adding sensor " + $scope.type + "(" + type_id + "), " + desc + " " + units + "!");
+				$http.post('api/sensor/type/' + type_id + '/units/' + units + '/desc/' + desc)
+				.then(function success (result) {
+					console.log("Successfully added sensor!");
+					$scope.refresh();
+				});
+			};
+			
+			$scope.addSensorType = function () {
+				console.log("Adding sensor type " + $scope.type_description);
+				$http.post('api/sensortype/desc/' + $scope.type_description)
+				.then(function success (result) {
+					console.log("Successfully added sensor type!");
+					$scope.refresh();
+				});
+			};
+
+			$scope.deleteSensor = function (sensor_id) {
+				console.log("Started delete on sensor id " + sensor_id);
+				if (!window.confirm("Are you sure you want to delete this sensor?")) {
+					console.log("Cancelled deletion of sensor " + sensor_id);
+					return;
+				}
+
+				console.log("Deleting sensor id " + sensor_id);
+				$http.delete('api/sensor/' + sensor_id)
+				.then(function success (result) {
+					console.log("Successfully deleted sensor!");
+					$scope.refresh();
+				}, function failure (result) {
+					alert("Cannot delete sensor!");
+					console.log(JSON.stringify(result));
+				});
+			};
+
+			$scope.deleteSensorType = function (sensor_type_id) {
+				console.log("Started delete on sensor type id " + sensor_type_id);
+				if (!window.confirm("Are you sure you want to delete this sensor type?")) {
+					console.log("Cancelled deletion of sensor type " + sensor_type_id);
+					return;
+				}
+
+				console.log("Deleting sensor type id " + sensor_type_id);
+				$http.delete('api/sensortype/' + sensor_type_id)
+				.then(function success (result) {
+					console.log("Successfully deleted sensor type!");
+					$scope.refresh();
+				}, function failure (result) {
+					alert("Cannot delete sensor type!");
+					console.log(JSON.stringify(result));
+				});
+			};
+		});
+
+		app.directive('ngConfirmAdd', [function () {
+			return {
+				link: function (scope, element, attr) {
+					element.bind ('click', function (event) {
+						console.log("Started add process with type: " + scope.type + " desc: " + scope.desc + " units: " + scope.units);
+						if (scope.type == '') {
+							alert("Type cannot be blank!");
+							return;
+						}
+						if (scope.units == '')
+						{
+							alert("Units cannot be blank!");
+							return;
+						}
+						if (!window.confirm("Are you sure you want to add this sensor?")) {
+							console.log("Cancelled adding new sensor");
+							return;
+						}
+						scope.$eval(scope.addSensor());
+					});
+				}
+			};
+		}]);
+
+		app.directive('ngConfirmAddType', [function () {
+			return {
+				link: function (scope, element, attr) {
+					element.bind ('click', function (event) {
+						console.log("Started add process with sensor type: " + scope.type_description);
+						if (scope.type_description == '') {
+							alert("Sensor type description cannot be blank!");
+							return;
+						}
+						if (!window.confirm("Are you sure you want to add this sensor type?")) {
+							console.log("Cancelled adding new sensor type");
+							return;
+						}
+						scope.$eval(scope.addSensorType());
+					});
+				}
+			};
+		}]);
+	</script>
 </body>
 </html>

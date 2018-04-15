@@ -29,11 +29,11 @@
 	<div class="main" ng-app="myApp" ng-controller="myCtrl" ng-init="refresh()">
 		<h1>Errors</h1>
 		<form name="newError">
-			<label for="type">Error Type</label>
-			<input type="text"ng-model="type" required>
+			<label for="type">Error Type:</label>
+			<input type="text" name="type" ng-model="type" required>
 			
-			<label for="type">Error Description</label>
-			<input type="text" ng-model="desc" required>
+			<label for="desc">Error Description:</label>
+			<input type="text" name="desc" ng-model="desc" required>
 			
 			<button ng-confirm-add>New Error</button>
 		</form>
@@ -75,7 +75,8 @@
 			
 			$scope.addError = function () {
 				console.log("Adding error (" + $scope.type + ", " + $scope.desc + ")!");
-				$http.post('api/error/type/' + $scope.type + '/desc/' + $scope.desc)
+				var desc = $scope.desc || 'NA';
+				$http.post('api/error/type/' + $scope.type + '/desc/' + desc)
 				.then(function success (result) {
 					console.log("Successfully added error!");
 					$scope.refresh();
