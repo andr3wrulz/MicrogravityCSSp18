@@ -42,7 +42,7 @@ module.exports = function (app, passport, fileDir) {// fileDir should be [projec
 	});
 	// index
 	app.get('/index.html', auth, function (req, res) {
-		res.sendFile(fileDir + 'index2.html');
+		res.sendFile(fileDir + 'index.html');
 	});
 	// login
 	app.get('/login.html', function (req, res) {
@@ -67,9 +67,13 @@ module.exports = function (app, passport, fileDir) {// fileDir should be [projec
 	app.get('/users.html', auth, reqAdmin, function (req, res) {
 		res.sendFile(fileDir + 'users.html');
 	});
-	// index2
-	app.get('/index2.html', auth, function (req, res) {
-		res.sendFile(fileDir + 'index2.html');
+	// history.js
+	app.get('/history.js', auth, function (req, res) {
+		res.sendFile(fileDir + 'history.js');
+	});
+	// history
+	app.get('/history.html', auth, function (req, res) {
+		res.sendFile(fileDir + 'history.html');
 	});
 }
 

@@ -2,13 +2,14 @@
 <head>
 	<title>Ground Control</title>
 	<link rel="stylesheet" href="styles.css">
-	<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
 	<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.6/angular.min.js"></script>
-	<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.2/Chart.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.2/Chart.js"></script>
+	<script src="index.js"></script>
+
+	<style>
+		.main{width:800px;}
+	</style>
 </head>
-<style>
-	.main{width:800px;}
-</style>
 <body>
 	<div class="navbar">
 		<input type="checkbox" class="openSidebarMenu" id="openSidebarMenu">
@@ -20,6 +21,7 @@
 		<div id="sidebarMenu">
 			<ul class="sidebarMenuInner">
 				<li><a href="index.html">Ground Control</p></a></li>
+				<li><a href="history.html">Historical Runs</p></a></li>
 				<li><a href="errors.html">Edit Errors</p></a></li>
 				<li><a href="sensors.html">Adjust Sensors</p></a></li>
 				<li><a href="users.html">Manage Users</p></a></li>
@@ -29,106 +31,31 @@
 			<a href="logout">Logout</a>
 		</div>
 	</div>
-	
+
 	<center>
-	<div class="main">
+	<div class="main" ng-app="myApp" ng-controller="myCtrl">
+		<h1>Currently viewing test run: {{run_id}}</h1>
+		<h2>Started: {{start_time | date:'medium'}}</h2>
 		<div>
-			<canvas id="line-chart" width="800" height="450"></canvas>
-			<canvas id="bline-chart" width="800" height="450"></canvas>
-			<canvas id="cline-chart" width="800" height="450"></canvas>
-	    </div>
-		
-		<!--><div>
-			Show/Hide Velocity: <input type="checkbox" id="velCheck" onclick="">
-		</div><-->
-		
-		<script>
-			var ctx = (document.getElementById("line-chart")).getContext('2d');
-			var velData = { 
-				data: [28, 48, 40, 19, 86, 27, 90],
-				label: "Velocity",
-				borderColor: "#8e5ea2",
-				fill: false
-			}
-			var startingData = {
-				labels: [1, 2, 3, 4, 5, 6, 7],
-					datasets: [
-					{ 
-						data: [65, 59, 80, 81, 56, 55, 40],
-						label: "Acceleration",
-						borderColor: "#3e95cd",
-						fill: false
-					},
-					velData
-					]
-			};
-			
-			var myChart = new Chart(ctx, {
-				type: 'line',
-				data: startingData,
-				options: {
-					title: {
-						display: true,
-						text: 'Live Drop Data'
-					}
-				}
-			});
-			
-			ctx = (document.getElementById("bline-chart")).getContext('2d');
-			var mybChart = new Chart(ctx, {
-				type: 'line',
-				data: startingData,
-				options: {
-					title: {
-						display: true,
-						text: 'Live Drop Data'
-					}
-				}
-			});
-			
-			ctx = (document.getElementById("cline-chart")).getContext('2d');
-			var mycChart = new Chart(ctx, {
-				type: 'line',
-				data: startingData,
-				options: {
-					title: {
-						display: true,
-						text: 'Live Drop Data'
-					}
-				}
-			});
-			
-			setInterval(function(){
-				//var newReading = get_reading_run(1);
-				//console.log("Reading: "+newReading);
-				var indexToUpdate = Math.round(Math.random() * startingData.labels.length);
-  
-				// Update one of the points in the second dataset
-				myChart.data.datasets[0].data[indexToUpdate] = Math.random() * 100;
-				mybChart.data.datasets[0].data[indexToUpdate] = Math.random() * 100;
-				mycChart.data.datasets[0].data[indexToUpdate] = Math.random() * 100;
-  
-				myChart.update();
-				mybChart.update();
-				mycChart.update();
-			}, 500);
-			
-			//$("#velCheck").change(function() {
-			//	if (this.checked)
-			//	{
-			//		
-			//	}
-			//});
-			
-			/*$("#btn1").on("click", function() {
-				myChart.data.datasets.push(velData);
-				myChart.update();
-			});
-			$("#btn2").on("click", function() {
-				myChart.data.datasets.splice(1,1);
-				myChart.update();
-			});*/
-		</script>
+			<button class="startTest" ng-click="startTest()">Start Test</button>
+			<button class="stopTest" ng-click="stopTest()">Stop Test</button>
+			<button class="displayTest" ng-click="displayTest()">Display Latest Run</button>
+			<label for="updateDelay">Update Frequency</label>
+			<select name="updateDelay" ng-model="updateDelay" ng-change="changedUpdateDelay()">
+				<option value="500">0.5 seconds</option>
+				<option value="1000">1 second</option>
+				<option value="2500" selected>2.5 seconds</option>
+				<option value="5000">5 seconds</option>
+			</select>
+		</div>
+
+		<div ng-repeat="c in chartsToShow">
+			<hr>
+			<h1>Sensor {{c.index + 1}} - {{c.description}}</h1>
+			<div style="width:800px; height:400px; text-align:center;">
+				<canvas id="chart{{c.index}}" width="800" height="400"></canvas>
+			</div>
+		</div>
 	</div>
 	</center>
 </body>
