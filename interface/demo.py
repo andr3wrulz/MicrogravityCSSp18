@@ -35,11 +35,25 @@ print "Created run: " + str(run_id)
 
 # Generate fake sensor data
 print "Generating data..."
-# 30 
-accelA_data = [random.uniform(2,8) for _ in xrange(20000)]
-accelB_data = [random.uniform(3,9) for _ in xrange(20000)]
-thermo_data = [random.uniform(20,30) for _ in xrange(20000)]
-baro_data = [random.uniform(0.5,1.0) for _ in xrange(20000)]
+
+accelA_data = []
+accelA = 1.0
+accelB_data = []
+accelB = 1.0
+thermo_data = []
+thermo = 20.0
+baro_data = []
+baro = 1.0
+for i in range(0,20000):
+	accelA += random.uniform(-0.1, 0.1)
+	accelA_data.append(accelA)
+	accelB += random.uniform(-0.1, 0.1)
+	accelB_data.append(accelB)
+	thermo += random.uniform(-0.1, 0.1)
+	thermo_data.append(thermo)
+	baro += random.uniform(-0.01, 0.01)
+	baro_data.append(baro)
+
 index = 0
 
 print "Starting reading insertion..."
@@ -58,7 +72,7 @@ while time.time() < end_time:
 		cur.execute("INSERT INTO run_errors (error_id, run_id, sensor_id) VALUES (1, %s, 1)", (run_id,))
 		db.commit()
 	
-	time.sleep(0.1)# Wait 100ms
+	time.sleep(0.5)# Wait 500ms
 	
 print "Test complete!"
 

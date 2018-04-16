@@ -22,7 +22,7 @@ module.exports = {
 		
 		dbConnection.query("CALL get_runerror(?)", error_number,
 		function(error, results, fields) {
-			if (error) throw error;
+			if (error) { console.log("[ERROR] Undetermined error"); console.log(error); }
 			return res.send({error: error, data: results, message: "Requested runtime error"});
 		});
 	},
@@ -35,7 +35,7 @@ module.exports = {
 		
 		dbConnection.query("CALL get_runerror_run(?)", run_id,
 		function(error, results, fields) {
-			if (error) throw error;
+			if (error) { console.log("[ERROR] Undetermined error"); console.log(error); }
 			return res.send({error: error, data: results, message: "Requested runtime error(s)"});
 		});
 	},
@@ -48,7 +48,7 @@ module.exports = {
 		
 		dbConnection.query("CALL get_runerror_error(?)", error_id,
 		function(error, results, fields) {
-			if (error) throw error;
+			if (error) { console.log("[ERROR] Undetermined error"); console.log(error); }
 			return res.send({error: error, data: results, message: "Requested runtime error(s)"});
 		});
 	},
@@ -61,7 +61,7 @@ module.exports = {
 		
 		dbConnection.query("CALL get_runerror_after(?)", after_time,
 		function(error, results, fields) {
-			if (error) throw error;
+			if (error) { console.log("[ERROR] Undetermined error"); console.log(error); }
 			return res.send({error: error, data: results, message: "Requested runtime error(s)"});
 		});
 	},
@@ -74,7 +74,7 @@ module.exports = {
 		
 		dbConnection.query("CALL get_runerror_before(?)", before_time,
 		function(error, results, fields) {
-			if (error) throw error;
+			if (error) { console.log("[ERROR] Undetermined error"); console.log(error); }
 			return res.send({error: error, data: results, message: "Requested runtime error(s)"});
 		});
 	},
@@ -88,7 +88,7 @@ module.exports = {
 		
 		dbConnection.query("CALL get_runerror_between(?, ?)", [after_time, before_time],
 		function(error, results, fields) {
-			if (error) throw error;
+			if (error) { console.log("[ERROR] Undetermined error"); console.log(error); }
 			return res.send({error: error, data: results, message: "Requested runtime error(s)"});
 		});
 	},
@@ -102,7 +102,7 @@ module.exports = {
 		
 		dbConnection.query("CALL create_runerror(?, ?)", [run_id, error_id],
 		function(error, results, fields) {
-			if (error) throw error;
+			if (error) { console.log("[ERROR] Undetermined error"); console.log(error); }
 			return res.send({error: error, data: results, message: "Created runtime error"});
 		});
 	},
@@ -117,7 +117,7 @@ module.exports = {
 		
 		dbConnection.query("CALL create_runerror_sensor(?, ?, ?)", [run_id, error_id, sensor_id],
 		function(error, results, fields) {
-			if (error) throw error;
+			if (error) { console.log("[ERROR] Undetermined error"); console.log(error); }
 			return res.send({error: error, data: results, message: "Created runtime error"});
 		});
 	},
@@ -132,7 +132,7 @@ module.exports = {
 		
 		dbConnection.query("CALL create_runerror_time(?, ?, ?)", [run_id, error_id, timestamp],
 		function(error, results, fields) {
-			if (error) throw error;
+			if (error) { console.log("[ERROR] Undetermined error"); console.log(error); }
 			return res.send({error: error, data: results, message: "Created runtime error"});
 		});
 	},
@@ -148,7 +148,7 @@ module.exports = {
 		
 		dbConnection.query("CALL create_runerror_sensor_time(?, ?, ?, ?)", [run_id, error_id, sensor_id, timestamp],
 		function(error, results, fields) {
-			if (error) throw error;
+			if (error) { console.log("[ERROR] Undetermined error"); console.log(error); }
 			return res.send({error: error, data: results, message: "Created runtime error"});
 		});
 	},
@@ -161,7 +161,7 @@ module.exports = {
 		
 		dbConnection.query("CALL remove_runerror(?)", error_number,
 		function(error, results, fields) {
-			if (error) throw error;
+			if (error) { console.log("[ERROR] Undetermined error"); console.log(error); }
 			return res.send({error: error, data: results, message: "Deleted runtime error"});
 		});
 	}

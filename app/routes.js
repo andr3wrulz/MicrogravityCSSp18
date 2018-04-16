@@ -16,11 +16,25 @@ module.exports = function (app, passport, fileDir) {// fileDir should be [projec
 		res.redirect('/login.html');
 	});
 
+	// ===== Fonts =====
+	app.get('/Gotham-Bold.otf', function (req, res) {
+		res.sendFile(fileDir + 'Gotham-Bold.otf');
+	});
+	app.get('/Gotham-Medium.otf', function (req, res) {
+		res.sendFile(fileDir + 'Gotham-Medium.otf');
+	});
+	app.get('/Gotham-BookItalic.otf', function (req, res) {
+		res.sendFile(fileDir + 'Gotham-BookItalic.otf');
+	});
 
 	// ===== Page routes =====
 	// style.css
 	app.get('/styles.css', function (req, res) {
 		res.sendFile(fileDir + 'styles.css');
+	});
+	// index.js
+	app.get('/index.js', function (req, res) {
+		res.sendFile(fileDir + 'index.js');
 	});
 	// root
 	app.get('/', auth, function (req, res) {
@@ -28,7 +42,7 @@ module.exports = function (app, passport, fileDir) {// fileDir should be [projec
 	});
 	// index
 	app.get('/index.html', auth, function (req, res) {
-		res.sendFile(fileDir + 'index.html');
+		res.sendFile(fileDir + 'index2.html');
 	});
 	// login
 	app.get('/login.html', function (req, res) {
@@ -52,6 +66,10 @@ module.exports = function (app, passport, fileDir) {// fileDir should be [projec
 	// users
 	app.get('/users.html', auth, reqAdmin, function (req, res) {
 		res.sendFile(fileDir + 'users.html');
+	});
+	// index2
+	app.get('/index2.html', auth, function (req, res) {
+		res.sendFile(fileDir + 'index2.html');
 	});
 }
 

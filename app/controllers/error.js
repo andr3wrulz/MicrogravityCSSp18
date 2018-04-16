@@ -11,7 +11,7 @@ module.exports = {
 		
 		dbConnection.query("CALL get_all_errors()",
 		function(error, results, fields) {
-			if (error) throw error;
+			if (error) { console.log("[ERROR] Undetermined error"); console.log(error); }
 			return res.send({error: error, data: results, message: "Requested errors"});
 		});
 	},
@@ -24,7 +24,7 @@ module.exports = {
 		
 		dbConnection.query("CALL get_error(?)", error_id,
 		function(error, results, fields) {
-			if (error) throw error;
+			if (error) { console.log("[ERROR] Undetermined error"); console.log(error); }
 			return res.send({error: error, data: results, message: "Requested error"});
 		});
 	},
@@ -38,7 +38,7 @@ module.exports = {
 		
 		dbConnection.query("CALL create_error(?, ?)", [type, desc],
 		function(error, results, fields) {
-			if (error) throw error;
+			if (error) { console.log("[ERROR] Undetermined error"); console.log(error); }
 			return res.send({error: error, data: results, message: 'Created error, refer to insertID field of data'});
 		});
 	},
@@ -53,7 +53,7 @@ module.exports = {
 		
 		dbConnection.query("CALL modify_error(?, ?, ?)", [error_id, type, desc],
 		function(error, results, fields) {
-			if (error) throw error;
+			if (error) { console.log("[ERROR] Undetermined error"); console.log(error); }
 			return res.send({error: error, data: results, message: 'Modified error'});
 		});
 	},
@@ -66,7 +66,7 @@ module.exports = {
 		
 		dbConnection.query("CALL remove_error(?)", error_id,
 		function(error, results, fields) {
-			if (error) throw error;
+			if (error) { console.log("[ERROR] Undetermined error"); console.log(error); }
 			return res.send({error: error, data: results, message: "Deleted requested error"});
 		});
 	}

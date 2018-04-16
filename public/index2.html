@@ -3,19 +3,30 @@
 	<title>Ground Control</title>
 	<link rel="stylesheet" href="styles.css">
 	<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.6/angular.min.js"></script>
-	<script src="https://d3js.org/d3.v4.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.2/Chart.js"></script>
 	<script src="index.js"></script>
+
+	<style>
+		.main{width:800px;}
+	</style>
 </head>
-<style>
-	.main{width:800px; padding-top:20px;}
-</style>
 <body>
 	<div class="navbar">
-		<div class="navbarHome">
-			<a href="index.html">Home</a>
+		<input type="checkbox" class="openSidebarMenu" id="openSidebarMenu">
+		<label for="openSidebarMenu" class="sidebarIconToggle">
+			<div class="spinner diagonal part-1"></div>
+			<div class="spinner horizontal"></div>
+			<div class="spinner diagonal part-2"></div>
+		</label>
+		<div id="sidebarMenu">
+			<ul class="sidebarMenuInner">
+				<li><a href="index.html">Ground Control</p></a></li>
+				<li><a href="errors.html">Edit Errors</p></a></li>
+				<li><a href="sensors.html">Adjust Sensors</p></a></li>
+				<li><a href="users.html">Manage Users</p></a></li>
+			</ul>
 		</div>
-		<div class="navbarSettings">
-			<a href="settings.html">Settings</a>
+		<div class="navbarLogout">
 			<a href="logout">Logout</a>
 		</div>
 	</div>
@@ -28,17 +39,23 @@
 			<button class="startTest" ng-click="startTest()">Start Test</button>
 			<button class="stopTest" ng-click="stopTest()">Stop Test</button>
 			<button class="displayTest" ng-click="displayTest()">Display Latest Run</button>
+			<label for="updateDelay">Update Frequency</label>
+			<select name="updateDelay" ng-model="updateDelay" ng-change="changedUpdateDelay()">
+				<option value="500">0.5 seconds</option>
+				<option value="1000">1 second</option>
+				<option value="2500" selected>2.5 seconds</option>
+				<option value="5000">5 seconds</option>
+			</select>
 		</div>
 
-		<div ng-repeat="s in sensors">
+		<div ng-repeat="c in chartsToShow">
 			<hr>
-			<div>
-				<h1>{{s.description}}</h1>
-				<svg id="svg{{s.sensor_id}}" width="800" height="500"></svg>
+			<h1>Sensor {{c.index + 1}} - {{c.description}}</h1>
+			<div style="width:800px; height:400px; text-align:center;">
+				<canvas id="chart{{c.index}}" width="800" height="400"></canvas>
 			</div>
 		</div>
 	</div>
-
 	</center>
 </body>
 </html>

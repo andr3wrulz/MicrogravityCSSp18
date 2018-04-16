@@ -33,7 +33,7 @@ module.exports = {
 		// Get all the sensors in the specified run
 		dbConnection.query("CALL get_sensors_in_run(?)", run_id,
 		function(error, results, fields) {
-			if (error) throw error;
+			if (error) { console.log("[ERROR] Undetermined error"); console.log(error); }
 			console.log("Results: " + JSON.stringify(results[0], null, 4));
 			
 			var data = {};
@@ -48,7 +48,7 @@ module.exports = {
 				data[sensor_id] = results[0][sensorIndex];
 				dbConnection.query("CALL get_reading_sensor_sorted(?, ?)", [run_id, sensor_id],
 				function (error2, results2, fields2) {
-					if (error) throw error;
+					if (error) { console.log("[ERROR] Undetermined error"); console.log(error); }
 					var readings = results2[0].map(item => item.reading);
 					var timestamps = results2[0].map(item => item.timestamp);
 					data[sensor_id].readings = readings;
@@ -71,7 +71,7 @@ module.exports = {
 		
 		dbConnection.query("CALL get_sensors_in_run(?)", run_id,
 		function(error, results, fields) {
-			if (error) throw error;
+			if (error) { console.log("[ERROR] Undetermined error"); console.log(error); }
 			return res.send(results[0]);
 		});
 	},
@@ -84,7 +84,7 @@ module.exports = {
 		
 		dbConnection.query("CALL get_reading(?)", read_id,
 		function(error, results, fields) {
-			if (error) throw error;
+			if (error) { console.log("[ERROR] Undetermined error"); console.log(error); }
 			return res.send({error: error, data: results, message: "Requested reading"});
 		});
 	},
@@ -97,7 +97,7 @@ module.exports = {
 		
 		dbConnection.query("CALL get_reading_run(?)", run_id,
 		function(error, results, fields) {
-			if (error) throw error;
+			if (error) { console.log("[ERROR] Undetermined error"); console.log(error); }
 			return res.send({error: error, data: results, message: "Requested reading(s)"});
 		});
 	},
@@ -111,7 +111,7 @@ module.exports = {
 		
 		dbConnection.query("CALL get_reading_run_sensor(?, ?)", [run_id, sensor_id],
 		function(error, results, fields) {
-			if (error) throw error;
+			if (error) { console.log("[ERROR] Undetermined error"); console.log(error); }
 			return res.send(results);
 		});
 	},
@@ -125,7 +125,7 @@ module.exports = {
 		
 		dbConnection.query("CALL get_reading_between(?, ?)", [after_time, before_time],
 		function(error, results, fields) {
-			if (error) throw error;
+			if (error) { console.log("[ERROR] Undetermined error"); console.log(error); }
 			return res.send({error: error, data: results, message: "Requested reading(s)"});
 		});
 	},
@@ -140,7 +140,7 @@ module.exports = {
 		
 		dbConnection.query("CALL create_reading(?, ?, ?)", [run_id, sensor_id, reading],
 		function(error, results, fields) {
-			if (error) throw error;
+			if (error) { console.log("[ERROR] Undetermined error"); console.log(error); }
 			return res.send({error: error, data: results, message: "Inserted reading, refer to insertID field of data"});
 		});
 	},
@@ -156,7 +156,7 @@ module.exports = {
 		
 		dbConnection.query("CALL create_reading_time(?, ?, ?, ?)", [run_id, sensor_id, reading, time],
 		function(error, results, fields) {
-			if (error) throw error;
+			if (error) { console.log("[ERROR] Undetermined error"); console.log(error); }
 			return res.send({error: error, data: results, message: "Inserted reading, refer to insertID field of data"});
 		});
 	},
@@ -170,7 +170,7 @@ module.exports = {
 		
 		dbConnection.query("CALL modify_reading(?, ?)", [read_id, new_value],
 		function(error, results, fields) {
-			if (error) throw error;
+			if (error) { console.log("[ERROR] Undetermined error"); console.log(error); }
 			return res.send({error: error, data: results, message: "Updated requested reading"});
 		});
 	},
@@ -183,7 +183,7 @@ module.exports = {
 		
 		dbConnection.query("CALL remove_reading(?)", read_id,
 		function(error, results, fields) {
-			if (error) throw error;
+			if (error) { console.log("[ERROR] Undetermined error"); console.log(error); }
 			return res.send({error: error, data: results, message: "Deleted requested reading"});
 		});
 	},
@@ -196,7 +196,7 @@ module.exports = {
 		
 		dbConnection.query("CALL remove_reading_run(?)", run_id,
 		function(error, results, fields) {
-			if (error) throw error;
+			if (error) { console.log("[ERROR] Undetermined error"); console.log(error); }
 			return res.send({error: error, data: results, message: "Deleted requested reading(s)"});
 		});
 	},
@@ -209,7 +209,7 @@ module.exports = {
 		
 		dbConnection.query("CALL remove_reading_sensor(?)", sensor_id,
 		function(error, results, fields) {
-			if (error) throw error;
+			if (error) { console.log("[ERROR] Undetermined error"); console.log(error); }
 			return res.send({error: error, data: results, message: "Deleted requested reading(s)"});
 		});
 	},

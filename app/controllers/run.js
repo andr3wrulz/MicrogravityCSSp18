@@ -14,14 +14,14 @@ module.exports = {
 	getAll: function(req, res) {
 		dbConnection.query("CALL get_all_runs()",
 		 function(error, results, fields) {
-			if (error) throw error;
+			if (error) { console.log("[ERROR] Undetermined error"); console.log(error); }
 			return res.send({error: error, data: results, message: "All runs"});
 		});
 	},
 	getLatest: function(req, res) {
 		dbConnection.query("SELECT MAX(run_id) AS run_id, (SELECT MIN(r.timestamp) FROM readings AS r WHERE r.run_id = run_id) AS start FROM runs",
 		function(error, results, fields) {
-			if (error) throw error;
+			if (error) { console.log("[ERROR] Undetermined error"); console.log(error); }
 			return res.send(results[0]);
 		});
 	},
@@ -32,23 +32,23 @@ module.exports = {
 			return res.status(400).send({error: true, message: 'Please provide a run_id!'});
 		}
 		
-		dbConnection.query("CALL get_run(x)", run_id,
+		dbConnection.query("CALL get_run(?)", run_id,
 		function(error, results, fields) {
-			if (error) throw error;
+			if (error) { console.log("[ERROR] Undetermined error"); console.log(error); }
 			return res.send({error: error, data: results, message: "Requested run"});
 		});
 	},
 	startRun: function(req, res) {
 		dbConnection.query("CALL send_start_command()",
 		function(error, results, fields) {
-			if (error) throw error;
+			if (error) { console.log("[ERROR] Undetermined error"); console.log(error); }
 			return res.send(results);
 		});
 	},
 	create: function(req, res) {		
 		dbConnection.query("CALL create_run()",
 		function(error, results, fields) {
-			if (error) throw error;
+			if (error) { console.log("[ERROR] Undetermined error"); console.log(error); }
 			return res.send({error: error, data: results, message: 'Created run, refer to insertID field of data'});
 		});
 	},
@@ -61,7 +61,7 @@ module.exports = {
 		
 		dbConnection.query("CALL create_run_title", title,
 		function(error, results, fields) {
-			if (error) throw error;
+			if (error) { console.log("[ERROR] Undetermined error"); console.log(error); }
 			return res.send({error: error, data: results, message: 'Created run, refer to insertID field of data'});
 		});
 	},
@@ -75,7 +75,7 @@ module.exports = {
 		
 		dbConnection.query("CALL create_run_title_desc", [title, desc],
 		function(error, results, fields) {
-			if (error) throw error;
+			if (error) { console.log("[ERROR] Undetermined error"); console.log(error); }
 			return res.send({error: error, data: results, message: 'Created run, refer to insertID field of data'});
 		});
 	},
@@ -90,7 +90,7 @@ module.exports = {
 		
 		dbConnection.query("CALL modify_run(?, ?, ?)", [run_id, title, desc],
 		function(error, results, fields) {
-			if (error) throw error;
+			if (error) { console.log("[ERROR] Undetermined error"); console.log(error); }
 			return res.send({error: error, data: results, message: 'Modified run'});
 		});
 	},
@@ -103,7 +103,7 @@ module.exports = {
 		
 		dbConnection.query("CALL remove_run(?)", run_id,
 		function(error, results, fields) {
-			if (error) throw error;
+			if (error) { console.log("[ERROR] Undetermined error"); console.log(error); }
 			return res.send({error: error, data: results, message: "Deleted requested run"});
 		});
 	}

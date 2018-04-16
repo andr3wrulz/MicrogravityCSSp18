@@ -16,11 +16,21 @@
 </style>
 <body>
 	<div class="navbar">
-		<div class="navbarHome">
-			<a href="index.html">Home</a>
+		<input type="checkbox" class="openSidebarMenu" id="openSidebarMenu">
+		<label for="openSidebarMenu" class="sidebarIconToggle">
+			<div class="spinner diagonal part-1"></div>
+			<div class="spinner horizontal"></div>
+			<div class="spinner diagonal part-2"></div>
+		</label>
+		<div id="sidebarMenu">
+			<ul class="sidebarMenuInner">
+				<li><a href="index.html">Ground Control</p></a></li>
+				<li><a href="errors.html">Edit Errors</p></a></li>
+				<li><a href="sensors.html">Adjust Sensors</p></a></li>
+				<li><a href="users.html">Manage Users</p></a></li>
+			</ul>
 		</div>
-		<div class="navbarSettings">
-			<a href="settings.html">Settings</a>
+		<div class="navbarLogout">
 			<a href="logout">Logout</a>
 		</div>
 	</div>

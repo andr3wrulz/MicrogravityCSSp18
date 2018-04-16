@@ -10,7 +10,7 @@ module.exports = {
 	getAll: function(req, res) {
 		dbConnection.query("CALL get_all_sensortypes()",
 		function(error, results, fields) {
-			if (error) throw error;
+			if (error) { console.log("[ERROR] Undetermined error"); console.log(error); }
 			return res.send({error: error, data: results, message: "Requested sensor types"});
 		});
 	},
@@ -23,7 +23,7 @@ module.exports = {
 		
 		dbConnection.query("CALL get_sensortype(?)", sensor_type_id,
 		function(error, results, fields) {
-			if (error) throw error;
+			if (error) { console.log("[ERROR] Undetermined error"); console.log(error); }
 			return res.send({error: error, data: results, message: "Requested sensor type"});
 		});
 	},
@@ -36,7 +36,7 @@ module.exports = {
 		
 		dbConnection.query("CALL create_sensortype(?)", description,
 		function(error, results, fields) {
-			if (error) throw error;
+			if (error) { console.log("[ERROR] Undetermined error"); console.log(error); }
 			return res.send({error: error, data: results, message: "Created sensor type"});
 		});
 	},
@@ -50,7 +50,7 @@ module.exports = {
 		
 		dbConnection.query("CALL modify_sensortype(?, ?)", [sensor_type_id, description],
 		function(error, results, fields) {
-			if (error) throw error;
+			if (error) { console.log("[ERROR] Undetermined error"); console.log(error); }
 			return res.send({error: error, data: results, message: "Updated sensor type"});
 		});
 	},
@@ -63,7 +63,7 @@ module.exports = {
 		
 		dbConnection.query("CALL remove_sensortype(?)", sensor_type_id,
 		function(error, results, fields) {
-			if (error) throw error;
+			if (error) { console.log("[ERROR] Undetermined error"); console.log(error); }
 			return res.send({error: error, data: results, message: "Deleted sensor type"});
 		});
 	},

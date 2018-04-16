@@ -1,31 +1,85 @@
 <html>
 <head>
 	<title>Ground Control</title>
-	<link rel="stylesheet" href="styles.css">
 	<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.6/angular.min.js"></script>
 </head>
 <style>
-	.loginBox{width:800px; margin:0 auto; padding: 200px 50px;}
-	.title{color:white; font-size: 28px; padding: 14px 16px;}
+	@font-face {
+		font-family: Gotham;
+		src: url("Gotham-Medium.otf") format("opentype");
+	}
+	
+	@font-face {
+		font-family: Gotham;
+		font-weight: bold;
+		src: url("Gotham-Bold.otf") format("opentype");
+	}
+	
+	@font-face {
+		font-family: Gotham;
+		font-style: italic;
+		src: url("Gotham-BookItalic.otf") format("opentype");
+	}
+	
+	body {
+		margin: 0;
+		padding: 0;
+		background: #a6b3be;
+		color: #354455;
+		font-family: 'Gotham', sans-serif;
+	}
+	
+	.main {
+		text-align: center;
+		width: 800px;
+		margin: 0 auto;
+		padding: 200px 50px;
+	}
+	
+	.loginBox label {
+		font-style: italic;
+		font-size: 18px;
+	}
+	
+	.loginBox input {
+		border-radius: 25px;
+		padding: 5px;
+		width: 350px;
+	}
+	
+	.usern {
+		padding: 20px;
+	}
+	
+	.passw {
+		padding: 35px;
+	}
+	
+	.loginBox button {
+		padding: 12px;
+		width: 150px;
+		background: #354455;
+		color: #eaedf4;
+		border-radius: 10px;
+		font-family: 'Gotham', sans-serif;
+	}
 </style>
 <body>
-	<div class="navbar">
-		<div class="title">
-			Ground Control
-		</div>
-	</div>
-
 	<center>
 	<div class="main">
 		<form action="/login" method="post" class="loginBox">
-			<h1>Login</h1>
-			<label for="username"><b>Username</b></label>
-			<input type="text" placeholder="Enter Username" name="username" required>
+			<h1>Ground Control Login</h1>
+			<div class="usern">
+				<label for="username"><b>Username: </b></label>
+				<input type="text" placeholder=" Enter Username" name="username" required>
+			</div>
+			
+			<div class="passw">
+				<label for="password"><b>Password: </b></label>
+				<input type="password" placeholder=" Enter Password" name="password" required>
+			</div>
 
-			<label for="password"><b>Password</b></label>
-			<input type="password" placeholder="Enter Password" name="password" required>
-
-			<button type="submit">Login</button>
+			<button type="submit">Sign in</button>
 		</form>
 	</div>
 	</center>

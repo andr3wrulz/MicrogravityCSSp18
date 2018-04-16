@@ -11,7 +11,7 @@ module.exports = {
 	getAll: function(req, res) {
 		dbConnection.query("CALL get_all_sensors()",
 		function(error, results, fields) {
-			if (error) throw error;
+			if (error) { console.log("[ERROR] Undetermined error"); console.log(error); }
 			return res.send({error: error, data: results, message: "Requested sensor"});
 		});
 	},
@@ -24,7 +24,7 @@ module.exports = {
 		
 		dbConnection.query("CALL get_sensor(?)", sensor_id,
 		function(error, results, fields) {
-			if (error) throw error;
+			if (error) { console.log("[ERROR] Undetermined error"); console.log(error); }
 			return res.send({error: error, data: results, message: "Requested sensor"});
 		});
 	},
@@ -38,7 +38,7 @@ module.exports = {
 		
 		dbConnection.query("CALL create_sensor(?, ?)", [sensor_type, units],
 		function(error, results, fields) {
-			if (error) throw error;
+			if (error) { console.log("[ERROR] Undetermined error"); console.log(error); }
 			return res.send({error: error, data: results, message: "Created sensor"});
 		});
 	},
@@ -53,7 +53,7 @@ module.exports = {
 		
 		dbConnection.query("CALL create_sensor_desc(?, ?, ?)", [sensor_type, units, description],
 		function(error, results, fields) {
-			if (error) throw error;
+			if (error) { console.log("[ERROR] Undetermined error"); console.log(error); }
 			return res.send({error: error, data: results, message: "Created sensor"});
 		});
 	},
@@ -69,7 +69,7 @@ module.exports = {
 		
 		dbConnection.query("CALL modify_sensor(?, ?, ?, ?)", [sensor_id, sensor_type, units, description],
 		function(error, results, fields) {
-			if (error) throw error;
+			if (error) { console.log("[ERROR] Undetermined error"); console.log(error); }
 			return res.send({error: error, data: results, message: "Updated sensor"});
 		});
 	},
@@ -82,7 +82,7 @@ module.exports = {
 		
 		dbConnection.query("CALL remove_sensor(?)", sensor_id,
 		function(error, results, fields) {
-			if (error) throw error;
+			if (error) { console.log("[ERROR] Undetermined error"); console.log(error); }
 			return res.send({error: error, data: results, message: "Deleted sensor"});
 		});
 	}

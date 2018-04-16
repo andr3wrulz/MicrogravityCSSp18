@@ -8,12 +8,13 @@ db = MySQLdb.connect(host="localhost", user="webuser", passwd="Super!Secure", db
 cur = db.cursor()
 
 # Clear out all tables
-cur.execute("TRUNCATE TABLE errors")
-cur.execute("TRUNCATE TABLE readings")
-cur.execute("TRUNCATE TABLE run_errors")
-cur.execute("TRUNCATE TABLE runs")
-cur.execute("TRUNCATE TABLE sensor_type")
-cur.execute("TRUNCATE TABLE sensors")
+cur.execute("DELETE FROM run_errors")
+cur.execute("DELETE FROM readings")
+cur.execute("DELETE FROM errors")
+cur.execute("DELETE FROM sensors")
+cur.execute("DELETE FROM sensor_type")
+cur.execute("DELETE FROM runs")
+
 
 # Add some sensor types
 cur.execute("INSERT INTO sensor_type (sensor_type_id, description) VALUES "
