@@ -18,6 +18,13 @@ module.exports = {
 			return res.send({error: error, data: results, message: "All runs"});
 		});
 	},
+	getAllWithTimes: function(req, res) {
+		dbConnection.query("CALL get_all_runs_with_times()",
+		 function(error, results, fields) {
+			if (error) { console.log("[ERROR] runAPI.getAllWithTimes SQL error"); console.log(error); }
+			return res.send({error: error, data: results, message: "All runs"});
+		});
+	},
 	getLatest: function(req, res) {
 		dbConnection.query("SELECT MAX(run_id) AS run_id, (SELECT MIN(r.timestamp) FROM readings AS r WHERE r.run_id = run_id) AS start FROM runs",
 		function(error, results, fields) {

@@ -4,10 +4,16 @@
 	<link rel="stylesheet" href="styles.css">
 	<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.6/angular.min.js"></script>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.2/Chart.js"></script>
-	<script src="index.js"></script>
+	<script src="history.js"></script>
 
 	<style>
 		.main{width:800px;}
+		table {border-collapse: collapse;}
+		table, th, td {border: 1px solid black;}
+		td {padding: 10px 20px;}
+		th {font-weight: bold;}
+		table tbody {overflow-y: scroll;}
+		.selected {background-color:deepskyblue}
 	</style>
 </head>
 <body>
@@ -33,23 +39,30 @@
 	</div>
 
 	<center>
-	<div class="main" ng-app="myApp" ng-controller="myCtrl">
-		<h1>Currently viewing test run: {{run_id}}</h1>
-		<h2>Started: {{start_time | date:'medium'}}</h2>
+	<div class="main" ng-app="myApp" ng-controller="myCtrl" ng-init="getRuns()">
+		<h1>Select Runs to Display</h1>
 		<div>
-			<button class="startTest" ng-click="startTest()">Start Test</button>
-			<button class="stopTest" ng-click="stopTest()">Stop Test</button>
-			<button class="displayTest" ng-click="displayTest()">Display Latest Run</button>
-			<label for="updateDelay">Update Frequency</label>
-			<select name="updateDelay" ng-model="updateDelay" ng-change="changedUpdateDelay()">
-				<option value="500">0.5 seconds</option>
-				<option value="1000">1 second</option>
-				<option value="2500" selected>2.5 seconds</option>
-				<option value="5000">5 seconds</option>
-			</select>
+			<table align="center">
+				<thead>
+					<tr>
+						<th>Run Id</th>
+						<th>Start Time</th>
+						<th>Run Title</th>
+						<th>Run Description</th>
+					</tr>
+				</thead>
+				<tbody ng-repeat="r in runs">
+					<tr ng-click="selectRun(r.run_id)" ng-class="{selected: run_ids.includes(r.run_id)}">
+						<td>{{r.run_id}}</td>
+						<td>{{r.start_time | date:'medium'}}</td>
+						<td>{{r.title}}</td>
+						<td>{{r.description}}</td>
+					</tr>
+				</tbody>
+			</table>
 		</div>
 
-		<div ng-repeat="c in chartsToShow">
+		<div ng-repeat="c in sensorList">
 			<hr>
 			<h1>Sensor {{c.index + 1}} - {{c.description}}</h1>
 			<div style="width:800px; height:400px; text-align:center;">

@@ -58,7 +58,9 @@ angular.module('myApp', [])
 				$scope.timer = null;
 			}
 			$scope.updateCharts();// Kick off updates (else we would have to wait for first timer callback)
-			$scope.timer = setInterval($scope.updateCharts, $scope.updateDelay);// Create timer
+			if ($scope.updateDelay != 0) {
+				$scope.timer = setInterval($scope.updateCharts, $scope.updateDelay);// Create timer
+			}
 		}, 250);
 	};
 
@@ -77,7 +79,7 @@ angular.module('myApp', [])
 					type: 'line',
 					data: {
 						datasets: [{
-							label: 'Readings',
+							label: $scope.chartsToShow[index].units,
 							borderColor: "rgba(51, 153, 255, 1)",
 							backgroundColor: "rgba(153, 204, 255, 1)",
 							data: response.data[0]
@@ -87,7 +89,17 @@ angular.module('myApp', [])
 						scales: {
 							xAxes: [{
 								type: 'linear',
-								position: 'bottom'
+								position: 'bottom',
+								scaleLabel: {
+									display: true,
+									labelString: 'Time'
+								}
+							}],
+							yAxes: [{
+								scaleLabel: {
+									display: true,
+									labelString: 'Reading'
+								}
 							}]
 						},
 						animation: {
@@ -110,7 +122,9 @@ angular.module('myApp', [])
 				$scope.timer = null;
 			}
 			$scope.updateCharts();// kick off updates
-			$scope.timer = setInterval($scope.updateCharts, $scope.updateDelay);// Create timer
+			if ($scope.updateDelay != 0) {
+				$scope.timer = setInterval($scope.updateCharts, $scope.updateDelay);// Create timer
+			}
 		}
 	};
 });

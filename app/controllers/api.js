@@ -24,6 +24,7 @@ module.exports = function(router, passport) {
 
 	var runAPI = require('./run');
 	router.get('/run', auth, runAPI.getAll);
+	router.get('/runwithtimes', auth, runAPI.getAllWithTimes);
 	router.get('/run/latest', auth, runAPI.getLatest);
 	router.get('/run/:id', auth, runAPI.getOne);
 	router.post('/run', auth, runAPI.create);

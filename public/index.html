@@ -42,6 +42,7 @@
 			<button class="displayTest" ng-click="displayTest()">Display Latest Run</button>
 			<label for="updateDelay">Update Frequency</label>
 			<select name="updateDelay" ng-model="updateDelay" ng-change="changedUpdateDelay()">
+				<option value="0">Never</option>
 				<option value="500">0.5 seconds</option>
 				<option value="1000">1 second</option>
 				<option value="2500" selected>2.5 seconds</option>

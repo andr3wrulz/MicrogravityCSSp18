@@ -1,116 +1,146 @@
 angular.module('myApp', [])
 
 .controller('myCtrl', function($scope, $http, $timeout) {
-	$scope.run_id = '';
-	$scope.updateDelay = 2500;
+	$scope.run_ids = [];
+	$scope.charts = [];
+
+	$scope.getRuns = function () {
+		console.log("Getting list of runs.");
+		$http.get('/api/runwithtimes')
+		.then(function success (response) {
+			console.log("Got run list successfully.");
+			console.log(JSON.stringify(response.data.data[0]));
+			$scope.runs = response.data.data[0];
+		}, function failure (response) {
+			console.error("Failed to get run list.");
+		});
+	};
 			
 	$scope.getSensors = function () {
-		console.log("Trying to get sensors for run " + $scope.run_id);
-		$http.get("api/reading/getsensorsinrun/" + $scope.run_id)
-		.then(function mySuccess(response) {
-			$scope.sensors = response.data;
-			console.log("Refreshed sensors list");
-			console.log(JSON.stringify($scope.sensors));
-			$scope.createCharts();
-		}, function myFailure (response) {
-			console.log("Could not get sensors for run");
-		})
-	};
-		
-	$scope.displayTest = function () {
-		$http.get("api/run/latest")
-		.then(function mySuccess (response) {
-			//console.log(JSON.stringify(response.data));
-			console.log("Got latest run " + response.data.run_id + " started: " + response.data.start);
-			$scope.run_id = response.data.run_id;
-			$scope.start_time = response.data.start;
-			$scope.getSensors();
-		}, function myFailure (response) {
-			console.log("Could not get latest test run");
-		})
-	};
-	
-	$scope.startTest = function () {
-		$http.get("api/run/startrun")
-		.then(function mySuccess(response) {
-			console.log("Started new test");
-			$scope.displayTest();
-		}, function myFailure (response) {
-			console.log("Could not start new run");
+		$scope.sensors = [];
+		angular.forEach($scope.run_ids, function (obj, index) {
+			console.log("Trying to get sensors for run " + obj);
+			$http.get("api/reading/getsensorsinrun/" + obj)
+			.then(function mySuccess(response) {
+				$scope.sensors[index] = response.data;
+				//console.log("Refreshed sensors list");
+				//console.log(JSON.stringify($scope.sensors[index]));
+				$scope.updateSensorList();
+			}, function myFailure (response) {
+				console.log("Could not get sensors for run " + obj);
+			})
 		});
 	};
 
-	$scope.stopTest = function () {
+	$scope.updateSensorList = function () {
+		//console.log("Updating sensor list");
+		$scope.sensorList = [];
 
-	};
-
-	$scope.createCharts = function () {
-		$scope.chartsToShow = [];
-		$scope.charts = [];
-		angular.forEach ($scope.sensors, function (obj, index) {
-			var sensorInfo = obj;
-			sensorInfo.index = index;
-			$scope.chartsToShow.push(sensorInfo);
-		});
-		$timeout(function () {
-			if ($scope.timer) {// If timer exists, clear it
-				clearInterval($scope.timer);
-				$scope.timer = null;
-			}
-			$scope.updateCharts();// Kick off updates (else we would have to wait for first timer callback)
-			$scope.timer = setInterval($scope.updateCharts, $scope.updateDelay);// Create timer
-		}, 250);
-	};
-
-	$scope.updateCharts = function () {
-		angular.forEach ($scope.chartsToShow, function (obj, index) {
-			console.log("Updating chart" + index);
-			$http.get('/api/reading/run/' + $scope.run_id + '/sensor/' + obj.sensor_id)
-			.then (function success (response) {
-				//console.log(JSON.stringify(response.data[0]));
-				console.log("Got data for chart" + index);
-				if ($scope.charts[index]) {
-					$scope.charts[index].destroy();
+		// Add missing sensors to list
+		angular.forEach($scope.sensors, function (obj, index) {// For each run's sensors list
+			angular.forEach(obj, function (obj2, index2) {// For each sensor in each sensor list
+				if (!$scope.sensorList.some(sensor => sensor.sensor_id === obj2.sensor_id)) {
+					$scope.sensorList.push(obj2);
 				}
-				var ctx = document.getElementById("chart" + index);
-				var chart = new Chart (ctx, {
-					type: 'line',
-					data: {
-						datasets: [{
-							label: 'Readings',
-							borderColor: "rgba(51, 153, 255, 1)",
-							backgroundColor: "rgba(153, 204, 255, 1)",
-							data: response.data[0]
-						}]
-					},
-					options: {
-						scales: {
-							xAxes: [{
-								type: 'linear',
-								position: 'bottom'
-							}]
-						},
-						animation: {
-							duration: 0
-						}
-					}
-				});
-				chart.update();
-			}, function failure (response) {
-				console.error("Failed to get readings for sensor " + obj.sensor_id + " in run " + $scope.run_id);
-				console.error(JSON.stringify(response));
 			});
 		});
+
+		// Give sensor in list indexes
+		angular.forEach($scope.sensorList, function (obj, index) {
+			obj.index = index;
+		});
+
+		console.log("Sensor list:");
+		console.log(JSON.stringify($scope.sensorList));
+		$scope.getData();
 	};
-	
-	$scope.changedUpdateDelay = function () {
-		if ($scope.run_id != '') {// If we are currently displaying results
-			if ($scope.timer) {// If the timer exists, clear it
-				clearInterval($scope.timer);
-				$scope.timer = null;
-			}
-			$scope.updateCharts();// kick off updates
-			$scope.timer = setInterval($scope.updateCharts, $scope.updateDelay);// Create timer
+
+	$scope.getData = function () {
+		console.log("Building reading data");
+		$scope.chartData = [];// [sensorList index][run_ids index]
+		angular.forEach($scope.sensorList, function (sensor, sensorIndex) {
+			$scope.chartData[sensorIndex] = [];
+			angular.forEach($scope.run_ids, function (run, runIndex) {// run is just the run_id not an object
+				$http.get('/api/reading/run/' + run + '/sensor/' + sensor.sensor_id)
+				.then(function success (response) {
+					//console.log(JSON.stringify(response.data[0]));
+					$scope.chartData[sensorIndex][runIndex] = response.data[0];
+				}, function failure (response) {
+					console.error("Failed to get readings for run: " + run + " sensor: " + sensor.sensor_id);
+				});
+			});
+		});
+		$timeout(function () {// try and wait out the http requests
+			$scope.updateCharts();
+		}, 500);
+	};
+		
+	$scope.selectRun = function (run_id) {
+		console.log("Clicked on run_id " + run_id);
+		if ($scope.run_ids.includes(run_id)) {// If it was selected, remove it
+			var index = $scope.run_ids.indexOf(run_id);
+			$scope.run_ids.splice(index, 1);// Remove 1 element at the index, ie, remove the element
+		} else {// If it wasn't selected, add it
+			$scope.run_ids.push(run_id);
 		}
+		$scope.getSensors();
+	}
+
+	$scope.updateCharts = function () {
+		angular.forEach ($scope.sensorList, function (sensor, sensorIndex) {
+			console.log("Updating chart" + sensorIndex);
+
+			if ($scope.charts[sensorIndex]) {// Destroy the existing chart if needed
+				$scope.charts[sensorIndex].destroy();
+			}
+
+			// Generate new data array
+			var newData = [];
+			angular.forEach($scope.run_ids, function (run, runIndex) {
+				//console.log("data["+sensorIndex+"]["+runIndex+"] = " + JSON.stringify($scope.chartData[sensorIndex][runIndex]));
+				var r = Math.round(Math.random() * 150 + 50);// Min 50, max 200
+				var g = Math.round(Math.random() * (200 - r) + 50);// min 50, max 200
+				var b = Math.round(Math.random() * (200 - r) + 50);// min 50, max 200
+				var color = "rgba(" + r + ", " + g + ", " + b + ", 1)";
+				var color2 = "rgba(" + (r-50) + ", " + (g-50) + ", " + (b-50) + ", 0.4)";
+				//console.log("color: " + color + " color2: " + color2);
+				newData.push({
+					label: 'Run ' + run,
+					borderColor: color,
+					backgroundColor: color2,
+					data: $scope.chartData[sensorIndex][runIndex]
+				});
+			});
+
+			var ctx = document.getElementById("chart" + sensorIndex);
+			var chart = new Chart (ctx, {
+				type: 'line',
+				data: {
+					datasets: newData
+				},
+				options: {
+					scales: {
+						xAxes: [{
+							type: 'linear',
+							position: 'bottom',
+							scaleLabel: {
+								display: true,
+								labelString: 'Time'
+							}
+						}],
+						yAxes: [{
+							scaleLabel: {
+								display: true,
+								labelString: 'Reading (' + sensor.units + ')'
+							}
+						}]
+					},
+					animation: {
+						duration: 0
+					}
+				}
+			});
+			$scope.charts.push(chart);
+		});
 	};
 });
