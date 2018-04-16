@@ -3,6 +3,8 @@ angular.module('myApp', [])
 .controller('myCtrl', function($scope, $http, $timeout) {
 	$scope.run_ids = [];
 	$scope.charts = [];
+	$scope.showCharts = false;
+	$scope.showErrors = false;
 
 	$scope.getRuns = function () {
 		console.log("Getting list of runs.");
@@ -14,6 +16,25 @@ angular.module('myApp', [])
 		}, function failure (response) {
 			console.error("Failed to get run list.");
 		});
+	};
+
+	$scope.getErrors = function () {
+		console.log("Getting errors associated with selected runs");
+		$scope.errors = [];
+		angular.forEach($scope.run_ids, function (run, runIndex) {
+			$http.get('/api/runerror/runwithdetails/' + run)
+			.then(function success (response) {
+				console.log(JSON.stringify(response.data.data[0]));
+				angular.forEach(response.data.data[0], function (error, errorIndex) {
+					$scope.errors.push(error);
+				});
+			}, function failure (response) {
+				console.error("Unable to retrieve errors for run " + run);
+			});
+		});
+		$timeout(function () {
+			$scope.showErrors = $scope.errors.length != 0;
+		}, 150);
 	};
 			
 	$scope.getSensors = function () {
@@ -30,6 +51,10 @@ angular.module('myApp', [])
 				console.log("Could not get sensors for run " + obj);
 			})
 		});
+		$timeout(function () {
+			// Hide charts if we have no sensors
+			$scope.showCharts = $scope.sensors.length != 0;
+		},150);
 	};
 
 	$scope.updateSensorList = function () {
@@ -84,6 +109,7 @@ angular.module('myApp', [])
 			$scope.run_ids.push(run_id);
 		}
 		$scope.getSensors();
+		$scope.getErrors();
 	}
 
 	$scope.updateCharts = function () {

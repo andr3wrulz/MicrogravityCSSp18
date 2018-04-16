@@ -26,7 +26,8 @@ module.exports = {
 		});
 	},
 	getLatest: function(req, res) {
-		dbConnection.query("SELECT MAX(run_id) AS run_id, (SELECT MIN(r.timestamp) FROM readings AS r WHERE r.run_id = run_id) AS start FROM runs",
+		dbConnection.query("SELECT r.run_id, (SELECT MIN(r2.timestamp) FROM readings AS r2 WHERE r2.run_id = r.run_id " +
+			"GROUP BY r2.run_id) AS start FROM runs AS r WHERE r.run_id = (SELECT MAX(run_id) FROM runs)",
 		function(error, results, fields) {
 			if (error) { console.log("[ERROR] Undetermined error"); console.log(error); }
 			return res.send(results[0]);
@@ -41,14 +42,21 @@ module.exports = {
 		
 		dbConnection.query("CALL get_run(?)", run_id,
 		function(error, results, fields) {
-			if (error) { console.log("[ERROR] Undetermined error"); console.log(error); }
+			if (error) { console.log("[ERROR] runAPI.getOne SQL error"); console.log(error); }
 			return res.send({error: error, data: results, message: "Requested run"});
 		});
 	},
 	startRun: function(req, res) {
 		dbConnection.query("CALL send_start_command()",
 		function(error, results, fields) {
-			if (error) { console.log("[ERROR] Undetermined error"); console.log(error); }
+			if (error) { console.log("[ERROR] runAPI.startRun SQL error"); console.log(error); }
+			return res.send(results);
+		});
+	},
+	stopRun: function(req, res) {
+		dbConnection.query("CALL send_stop_command()",
+		function(error, results, fields) {
+			if (error) { console.log("[ERROR] runAPI.stopRun SQL error"); console.log(error); }
 			return res.send(results);
 		});
 	},

@@ -27,6 +27,8 @@ module.exports = function(router, passport) {
 	router.get('/runwithtimes', auth, runAPI.getAllWithTimes);
 	router.get('/run/latest', auth, runAPI.getLatest);
 	router.get('/run/:id', auth, runAPI.getOne);
+	router.post('/run/startrun', auth, runAPI.startRun);
+	router.post('/run/stoprun', auth, runAPI.stopRun);
 	router.post('/run', auth, runAPI.create);
 	router.post('/run/title/:title', auth, runAPI.createWithTitle);
 	router.post('/run/title/:title/desc/:desc', auth, runAPI.createWithDetails);
@@ -36,6 +38,7 @@ module.exports = function(router, passport) {
 	var runErrorAPI = require('./runerror');
 	router.get('/runerror/:id', auth, runErrorAPI.getOne);
 	router.get('/runerror/run/:run', auth, runErrorAPI.getByRun);
+	router.get('/runerror/runwithdetails/:run', auth, runErrorAPI.getByRunWithErrorInfo);
 	router.get('/runerror/error/:error_id', auth, runErrorAPI.getByError);
 	router.get('/runerror/after/:after_time', auth, runErrorAPI.getAfter);
 	router.get('/runerror/before/:before_time', auth, runErrorAPI.getBefore);

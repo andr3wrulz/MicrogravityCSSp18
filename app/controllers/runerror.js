@@ -39,6 +39,19 @@ module.exports = {
 			return res.send({error: error, data: results, message: "Requested runtime error(s)"});
 		});
 	},
+	getByRunWithErrorInfo: function(req, res) {
+		let run_id = req.params.run;
+		
+		if (!run_id) {
+			return res.status(400).send({error: true, message: 'Please provide a run_id!'});
+		}
+		
+		dbConnection.query("CALL get_runerror_run_with_error_info(?)", run_id,
+		function(error, results, fields) {
+			if (error) { console.log("[ERROR] runerrorAPI.getByRunWithErrorInfo SQL error"); console.log(error); }
+			return res.send({error: error, data: results, message: "Requested runtime error(s)"});
+		});
+	},
 	getByError: function(req, res) {
 		let error_id = req.params.error;
 		

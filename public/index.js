@@ -3,6 +3,8 @@ angular.module('myApp', [])
 .controller('myCtrl', function($scope, $http, $timeout) {
 	$scope.run_id = '';
 	$scope.updateDelay = 2500;
+	$scope.showErrors = false;
+	$scope.errors = [];
 			
 	$scope.getSensors = function () {
 		console.log("Trying to get sensors for run " + $scope.run_id);
@@ -24,6 +26,7 @@ angular.module('myApp', [])
 			console.log("Got latest run " + response.data.run_id + " started: " + response.data.start);
 			$scope.run_id = response.data.run_id;
 			$scope.start_time = response.data.start;
+
 			$scope.getSensors();
 		}, function myFailure (response) {
 			console.log("Could not get latest test run");
@@ -31,17 +34,31 @@ angular.module('myApp', [])
 	};
 	
 	$scope.startTest = function () {
-		$http.get("api/run/startrun")
+		$http.post("api/run/startrun")
 		.then(function mySuccess(response) {
 			console.log("Started new test");
-			$scope.displayTest();
+			$timeout(function () {
+				if ($scope.updateDelay == 0) {// Allow updates since we just started a test
+					$scope.updateDelay = 2500;
+				}
+				$scope.displayTest();
+			},2000);
 		}, function myFailure (response) {
-			console.log("Could not start new run");
+			console.error("Could not start new run");
 		});
 	};
 
 	$scope.stopTest = function () {
-
+		console.log("Sending stop command");
+		$http.post("api/run/stoprun")
+		.then(function mySuccess(response) {
+			console.log("Sent stop command successfully");
+			$timeout(function () {
+				$scope.displayTest();
+			},2000);
+		}, function myFailure (response) {
+			console.error("Could not send stop command!");
+		});
 	};
 
 	$scope.createCharts = function () {
@@ -59,12 +76,34 @@ angular.module('myApp', [])
 			}
 			$scope.updateCharts();// Kick off updates (else we would have to wait for first timer callback)
 			if ($scope.updateDelay != 0) {
-				$scope.timer = setInterval($scope.updateCharts, $scope.updateDelay);// Create timer
+				$scope.timer = setInterval(function() {
+					$scope.updateCharts();
+					$scope.getErrors();
+				}, $scope.updateDelay);// Create timer
 			}
 		}, 250);
 	};
 
+	$scope.getErrors = function () {
+		console.log("Getting errors associated with selected runs");
+		$http.get('/api/runerror/runwithdetails/' + $scope.run_id)
+		.then(function success (response) {
+			console.log(JSON.stringify(response.data.data[0]));
+			if ($scope.errors.length != response.data.data[0].length) {
+				$scope.errors = response.data.data[0];
+				$scope.showErrors = $scope.errors.length != 0;
+			}
+		}, function failure (response) {
+			console.error("Unable to retrieve errors for run " + $scope.run_id);
+		});
+	};
+
 	$scope.updateCharts = function () {
+		// If we are loading an old test, don't bother trying to update next time
+		if (new Date() - new Date($scope.start_time) >= 1000*60 && $scope.updateDelay != 0) {
+			$scope.updateDelay = 0;
+			$scope.changedUpdateDelay();
+		}
 		angular.forEach ($scope.chartsToShow, function (obj, index) {
 			console.log("Updating chart" + index);
 			$http.get('/api/reading/run/' + $scope.run_id + '/sensor/' + obj.sensor_id)
@@ -123,7 +162,10 @@ angular.module('myApp', [])
 			}
 			$scope.updateCharts();// kick off updates
 			if ($scope.updateDelay != 0) {
-				$scope.timer = setInterval($scope.updateCharts, $scope.updateDelay);// Create timer
+				$scope.timer = setInterval(function() {
+					$scope.updateCharts();
+					$scope.getErrors();
+				}, $scope.updateDelay);// Create timer
 			}
 		}
 	};

@@ -50,6 +50,32 @@
 			</select>
 		</div>
 
+		<div ng-show="showErrors">
+				<h2>Errors in current run</h2>
+				<table align="center">
+					<thead>
+						<tr>
+							<th>Run Id</th>
+							<th>Error Id</th>
+							<th>Error Type</th>
+							<th>Error Description</th>
+							<th>Sensor</th>
+							<th>Timestamp</th>
+						</tr>
+					</thead>
+					<tbody ng-repeat="e in errors">
+						<tr>
+							<td>{{e.run_id}}</td>
+							<td>{{e.error_id}}</td>
+							<td>{{e.type}}</td>
+							<td>{{e.description}}</td>
+							<td>{{e.sensor_id}}</td>
+							<td>{{e.timestamp | date:'medium'}}</td>
+						</tr>
+					</tbody>
+				</table>
+		</div>
+
 		<div ng-repeat="c in chartsToShow">
 			<hr>
 			<h1>Sensor {{c.index + 1}} - {{c.description}}</h1>
