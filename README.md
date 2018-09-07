@@ -1,6 +1,12 @@
 # Ground Control
 This project was created by Andrew Geltz, Luis O'Donnel and Priscilla Ryan as a senior design project for the UCF CS department. This project is sponsored by Florida Space Institute. The goal for this project was to create a ground interface for a reduced gravity experiment system to provide sensor information and basic commands while tests are being run. The system consists of a capsule tethered to a balloon that is repeatedly dropped and reeled back up to provide payload with reduced gravity.
 
+Conference paper in [Conference paper.pdf](https://github.com/andr3wrulz/MicrogravityCSSp18/blob/master/Conference%20Paper.pdf)
+
+Full documentation in [Design document.pdf](https://github.com/andr3wrulz/MicrogravityCSSp18/blob/master/Design%20document.pdf)
+
+Simplified summary in [Showcase.pptx](https://github.com/andr3wrulz/MicrogravityCSSp18/blob/master/Showcase.pptx)
+
 ## Getting Started
 One of the main goals of our design was for it to be easily deployed and extendable. For this reason we chose to implement a (M)EAN (MySQL instead of MongoDB) in a docker container. The docker container contains everything except the database (becuase we were unable to find a good way to dockerize a MySQL database).
 
